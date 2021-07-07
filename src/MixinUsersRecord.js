@@ -24,5 +24,22 @@ import firebase from 'firebase';
                 })
                 this.users = obj
             })
+        },
+        computed: {
+            userProfile() {
+                this.objectUsers()
+                return this.users
+            }
+        },
+        methods: {
+            objectUsers() {
+                const arr = Object.entries(this.users)
+                const result = arr.filter((value) => {
+                  if (Number(value[1].number) === Number(this.id)) {
+                    return value;
+                  }
+                })
+                this.users = result
+              },
         }
     };
