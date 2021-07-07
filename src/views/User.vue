@@ -15,6 +15,7 @@
             <label>部屋番号:</label>
             {{user[1].number}}
         </div>
+        <router-view></router-view>
     </div>
 </template>
 <script>

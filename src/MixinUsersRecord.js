@@ -10,6 +10,10 @@ import firebase from 'firebase';
                 careLevel: '',
                 birthday: '',
                 users: {},
+                day: '',
+                record: '',
+                recordID: this._uid,
+                dayRecords: []
             }
         },
         created() {
