@@ -22,7 +22,6 @@
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
         props: ['id'],
-        mixins: [MixinUsersRecord],
-       
+        mixins: [MixinUsersRecord]
     };
 </script>

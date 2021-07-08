@@ -1,5 +1,6 @@
 <template>
-    <div @mousemove.once='getRecords'>
+    <div @mousemove.once="getRecords">
+        <router-link :to="'/User/' + id + '/UpdateUser'">利用者情報更新</router-link>
         <h3>記録</h3>
         <label for="day">日付: </label>
         <input type="datetime-local" id="day" v-model="day">
@@ -8,16 +9,30 @@
         <textarea id="record" v-model="record"></textarea>
         <p>{{_uid}}</p>
         <br>
+        <button @click="a">a</button>
         <button @click="addRecords(_uid)">追加</button>
-        <div v-for="rec in dayRecords" :key="rec.fields.recordID.stringValue">
         <hr>
-        {{rec.fields.day.stringValue}}
-        <br>
-        {{rec.fields.record.stringValue}}
-        {{rec.fields.recordID.integerValue}}
+        <div>
+            <h4>更新用フォーム</h4>
+            <label for="newDay">日付: </label>
+            <input type="datetime-local" id="newDay" v-model="newDay">
+            <br>
+            <label for="newRecord">記録: </label>
+            <textarea id="newRecord" v-model="newRecord"></textarea>
+         </div>
+         <div id="scroll">
+            <div v-for="(rec, key) in dayRecords" :key="key">
+            <hr>
+            {{rec.fields.day.stringValue}}
+            <br>
+            {{rec.fields.record.stringValue}}
+            
 
-        <button @click="deleteRecord(rec.fields.recordID.integerValue)">削除</button>
-        </div>
+            <button @click="updateRecord(rec.fields.recordID.integerValue)">更新</button>
+            <button @click="deleteRecord(rec.fields.recordID.integerValue)">削除</button>
+            
+            </div>
+         </div>
     </div>
 </template>
 <script>
@@ -36,6 +51,7 @@
                 record: this.record,
                 recordID: uid
                 }).then(res => {
+                    console.log(res);
                     if(res === res) {    
                              this.$router.go()
                              alert('追加しました。')
@@ -43,13 +59,6 @@
                 });
                 this.day = '',
                 this.record = ''
-            },
-            getRecords() {
-                axios.get(
-                'https://firestore.googleapis.com/v1/projects/users-record/databases/(default)/documents/users/users-record/' + this.userProfile[0][0],
-                ).then(res => {
-                this.dayRecords = res.data.documents;
-                });
             },
             deleteRecord(recID) {
                  this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(
@@ -60,8 +69,38 @@
                          }
                      }
                  );  
+            },
+            getRecords() {
+                axios.get(
+                'https://firestore.googleapis.com/v1/projects/users-record/databases/(default)/documents/users/users-record/' + this.userProfile[0][0],
+                ).then(res => {
+                this.dayRecords = res.data.documents;
+                });
+            },
+           updateRecord(recID) {
+               this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
+                day: this.newDay,
+                record: this.newRecord
+                }).then(res => {
+                alert('更新しました。');
+                if(res === res) {
+                this.$router.go();
+                }
+               });
+            },
+            a() {
+                var i = this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).id
+                console.log(i);
+                console.log(this.userProfile);
             }
         }
 
     };
 </script>
+<style>
+    #scroll {
+        height: 200px;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+</style>

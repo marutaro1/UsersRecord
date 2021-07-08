@@ -12,8 +12,10 @@ import firebase from 'firebase';
                 users: {},
                 day: '',
                 record: '',
+                newDay: '',
+                newRecord: '',
                 recordID: this._uid,
-                dayRecords: []
+                dayRecords: {}
             }
         },
         created() {
@@ -44,6 +46,6 @@ import firebase from 'firebase';
                   }
                 })
                 this.users = result
-              },
+              }
         }
     };
