@@ -30,7 +30,8 @@
 
             <button @click="updateRecord(rec.fields.recordID.integerValue)">更新</button>
             <button @click="deleteRecord(rec.fields.recordID.integerValue)">削除</button>
-            
+            <button @click="addArchives(rec.fields.record.stringValue)">
+            『記録まとめ』へ上書き</button>
             </div>
          </div>
     </div>
@@ -39,7 +40,7 @@
     import axios from 'axios';
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
-        props: ['id'],
+        props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
         created() {
             this._uid = Math.floor( Math.random(this._uid) * 100 );
@@ -92,7 +93,18 @@
                 var i = this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).id
                 console.log(i);
                 console.log(this.userProfile);
-            }
+            },
+             addArchives(record) {
+               this.db.collection('users').doc('users-record').collection('archives').doc(this.id).set({
+                userName: this.userName,
+                userNumber: this.id,
+                archive: record
+                }).then(
+                function() {
+                    alert('追加しました');
+                }
+               );
+             }
         }
 
     };
