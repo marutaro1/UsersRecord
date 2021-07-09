@@ -15,7 +15,7 @@ import firebase from 'firebase';
                 newDay: '',
                 newRecord: '',
                 recordID: this._uid,
-                dayRecords: {}
+                dayRecords: {},
             }
         },
         created() {
