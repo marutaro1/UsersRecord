@@ -24,7 +24,7 @@
         <input type="date" id="newBirthday" v-model="newBirthday">
         <br>
         <button @click="updateProfile">更新</button>
-        <button @click="a">a</button>
+        <button><router-link :to="'/User/' + id + '/records'">記録へ戻る</router-link></button>
 
     </div>
 </template>
@@ -51,9 +51,6 @@
               });
               this.$router.push('/');
               alert('更新しました');
-             },
-             a() {
-                 console.log(this.userProfile);
              }
         }
         

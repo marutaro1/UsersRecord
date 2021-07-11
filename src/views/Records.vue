@@ -1,5 +1,5 @@
 <template>
-    <div @mousemove.once="getRecords">
+    <div>
         <router-link :to="'/User/' + id + '/UpdateUser'">利用者情報更新</router-link>
         <h3>記録</h3>
         <label for="day">日付: </label>
@@ -9,8 +9,8 @@
         <textarea id="record" v-model="record"></textarea>
         <p>{{_uid}}</p>
         <br>
-        <button @click="a">a</button>
-        <button @click="addRecords(_uid)">追加</button>
+        <button @click="getRecords">更新</button>
+        <button @click="addRecords(_uid); getRecords()">追加</button>
         <hr>
         <div>
             <h4>更新用フォーム</h4>
@@ -28,8 +28,8 @@
             {{rec.fields.record.stringValue}}
             
 
-            <button @click="updateRecord(rec.fields.recordID.integerValue)">更新</button>
-            <button @click="deleteRecord(rec.fields.recordID.integerValue)">削除</button>
+            <button @click="updateRecord(rec.fields.recordID.integerValue); getRecords()">更新</button>
+            <button @click="deleteRecord(rec.fields.recordID.integerValue); getRecords()">削除</button>
             <button @click="addArchives(rec.fields.record.stringValue)">
             『記録まとめ』へ上書き</button>
             </div>
@@ -52,42 +52,58 @@
                 record: this.record,
                 recordID: uid
                 }).then(res => {
-                    console.log(res);
                     if(res === res) {    
-                             this.$router.go()
+                             
                              alert('追加しました。')
                          }
                 });
+                this.getRecords()
                 this.day = '',
                 this.record = ''
+                this._uid = Math.floor( Math.random(this._uid) * 100 )
             },
             deleteRecord(recID) {
                  this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(
                      res => {
-                         if(res === res) {
-                             this.$router.go()
+                         if(res === res) { 
                              alert('削除しました。')
                          }
                      }
                  );  
+                 this.getRecords()
             },
             getRecords() {
                 axios.get(
                 'https://firestore.googleapis.com/v1/projects/users-record/databases/(default)/documents/users/users-record/' + this.userProfile[0][0],
                 ).then(res => {
-                this.dayRecords = res.data.documents;
+                    this.dayRecords = res.data.documents;
                 });
+                console.log('get');
+            },
+            ge() {
+                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+                const ob = {}
+                querySnapshot.forEach(doc => {
+                //querySnapshotが現在の全体のデータ
+                    ob[this.RecordID] = doc.data()
+                })
+                this.dayRecords = ob
+                console.log(this.dayRecords);
+            })
             },
            updateRecord(recID) {
                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 record: this.newRecord
                 }).then(res => {
-                alert('更新しました。');
                 if(res === res) {
-                this.$router.go();
+                alert('更新しました。');
+               
                 }
                });
+               this.getRecords()
+               this.newDay = ''
+               this.newRecord = ''
             },
             a() {
                 var i = this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).id
