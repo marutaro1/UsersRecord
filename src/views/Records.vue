@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div @mousemove.once="getRecords">
         <router-link :to="'/User/' + id + '/UpdateUser'">利用者情報更新</router-link>
         <h3>記録</h3>
         <label for="day">日付: </label>
@@ -10,7 +10,7 @@
         <p>{{_uid}}</p>
         <br>
         <button @click="getRecords">更新</button>
-        <button @click="addRecords(_uid); getRecords()">追加</button>
+        <button @click="addRecords(_uid);">追加</button>
         <hr>
         <div>
             <h4>更新用フォーム</h4>
@@ -28,8 +28,8 @@
             {{rec.fields.record.stringValue}}
             
 
-            <button @click="updateRecord(rec.fields.recordID.integerValue); getRecords()">更新</button>
-            <button @click="deleteRecord(rec.fields.recordID.integerValue); getRecords()">削除</button>
+            <button @click="updateRecord(rec.fields.recordID.integerValue);">更新</button>
+            <button @click="deleteRecord(rec.fields.recordID.integerValue);">削除</button>
             <button @click="addArchives(rec.fields.record.stringValue)">
             『記録まとめ』へ上書き</button>
             </div>
@@ -51,13 +51,15 @@
                 day: this.day,
                 record: this.record,
                 recordID: uid
-                }).then(res => {
+                }).then(
+                    res => {
                     if(res === res) {    
                              
                              alert('追加しました。')
                          }
-                });
-                this.getRecords()
+                      this.getRecords()
+                    }
+                );
                 this.day = '',
                 this.record = ''
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
@@ -68,9 +70,9 @@
                          if(res === res) { 
                              alert('削除しました。')
                          }
+                         this.getRecords()
                      }
                  );  
-                 this.getRecords()
             },
             getRecords() {
                 axios.get(
@@ -95,13 +97,14 @@
                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 record: this.newRecord
-                }).then(res => {
-                if(res === res) {
-                alert('更新しました。');
-               
-                }
-               });
-               this.getRecords()
+                }).then(
+                    res => {
+                        if(res === res) {
+                        alert('更新しました。');
+                        }
+                    this.getRecords()
+                    }
+               );
                this.newDay = ''
                this.newRecord = ''
             },

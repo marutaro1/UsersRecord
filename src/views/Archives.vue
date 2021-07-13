@@ -6,7 +6,7 @@
     <label for="newArchive">更新用:</label>
     <textarea v-model="newArchive"></textarea>
     <hr>
-   <div v-for="record of archivesPost" :key="record.userNumber">
+   <div v-for="record of sortArchives" :key="record.userNumber">
    <label>部屋番号:</label>
     {{record.fields.userNumber.stringValue}}
     <br>
@@ -33,6 +33,13 @@
        archivesPost: []
      };
    },
+   computed: {
+     sortArchives() {
+       return this.archivesPost.slice().sort((a, b) => {
+                    return Number(a.fields.userNumber.stringValue) - Number(b.fields.userNumber.stringValue);
+                });
+     }
+   },
    methods: {
      getArchives() {
        axios.get(
@@ -40,6 +47,7 @@
        ).then(res => {
          console.log(res.data.documents);  
          this.archivesPost = res.data.documents
+         console.log(this.archivesPost);  
      });
      },
      updateArchive(No) {
@@ -60,6 +68,9 @@
         }
         alert('記録まとめから外しました。');
       });
+     },
+     check() {
+       console.log(this.sortArchives);
      }
     }
   }
