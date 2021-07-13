@@ -7,6 +7,15 @@
         <label for="newNumber"> 部屋番号: </label>
         <input type="number" id="newNumber" v-model="newNumber">
         <br>
+        <label>部屋内番号: </label>
+        <select id="roomCheck" v-model="roomCheck">
+            <option value="" selected="selected">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <br>
         <label for="newCareLevel"> 要介護度: </label>
         <select name="ご用件" id="newCareLevel" v-model="newCareLevel">
             <option value="" selected="selected">選択してください</option>
@@ -38,7 +47,8 @@
             newName: '',
             newBirthday: '',
             newCareLevel: '',
-            newNumber: ''
+            newNumber: '',
+            newRoomCheck: ''
             };
         },
         methods: {
@@ -47,7 +57,7 @@
                 name: this.newName,
                 birthday: this.newBirthday,
                 careLevel: this.newCareLevel,
-                number: this.newNumber,
+                number: this.newNumber + this.newRoomCheck,
               });
               this.$router.push('/');
               alert('更新しました');

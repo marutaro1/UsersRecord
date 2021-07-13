@@ -11,7 +11,7 @@
     {{record.fields.userNumber.stringValue}}
     <br>
    <label>名前:</label>
-    {{record.fields.userName.stringValue}}
+    {{record.fields.userName.stringValue}}様
     <br>
     <label>記録:</label>
     {{record.fields.archive.stringValue}}

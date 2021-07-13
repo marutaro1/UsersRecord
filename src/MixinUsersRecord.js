@@ -9,6 +9,7 @@ import firebase from 'firebase';
                 number: '',
                 careLevel: '',
                 birthday: '',
+                roomCheck: '',
                 users: {},
                 day: '',
                 record: '',
@@ -35,6 +36,13 @@ import firebase from 'firebase';
             userProfile() {
                 this.objectUsers()
                 return this.users
+            },
+            age() {
+                return function(a) {
+                    var ageTime = Date.now() - new Date(a).getTime();
+                    var ageDate = new Date(ageTime);
+                    return ageDate.getUTCFullYear() - 1970;
+                }
             }
         },
         methods: {

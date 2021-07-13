@@ -5,8 +5,9 @@
         <input type="text" v-model="keyword">
         <div v-for="user in serchUsers" :key="user.key">
             <hr>
-            <p>部屋番号: {{user.value.number}}</p>
-            <router-link :to="'/User/' + user.value.number + '/Records'">名前: {{user.value.name}}</router-link>
+            <p>部屋番号: {{parseInt(user.value.number / 10)}}号室</p>
+            <p>年齢: {{age(user.value.birthday)}}歳</p>
+            <router-link :to="'/User/' + user.value.number + '/Records'">{{user.value.name}}様</router-link>
         </div>
     </div>
 </template>
@@ -46,8 +47,8 @@
             },
             checkB() {
                 console.log(this.sortNumber)
-            },
-        }
+            }
+        },
 
     };
 </script>

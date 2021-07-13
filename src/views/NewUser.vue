@@ -7,8 +7,17 @@
         <label for="number"> 部屋番号: </label>
         <input type="number" id="number" v-model="number">
         <br>
+        <label>部屋内番号: </label>
+        <select id="roomCheck" v-model="roomCheck">
+            <option value="" selected="selected">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <br>
         <label for="careLevel"> 要介護度: </label>
-        <select name="ご用件" id="careLevel" v-model="careLevel">
+        <select id="careLevel" v-model="careLevel">
             <option value="" selected="selected">選択してください</option>
             <option value="自立">自立</option>
             <option value="要支援1">要支援1</option>
@@ -36,12 +45,13 @@ export default {
     mixins: [MixinUsersRecord],
     methods: {
         addUser() {
-            if(this.name === '' || this.number === '' || this.careLevel === '' || this.birthday === ''){ return }
+            if(this.name === '' || this.number === ''|| this.checBox === ''|| this.careLevel === '' || this.birthday === ''){ return }
             this.usersRef.add({
              name: this.name,
              birthday: this.birthday,
              careLevel: this.careLevel,
-             number: this.number
+             number: this.number + this.roomCheck,
+             floor: parseInt(String(Number(this.number) / 100))
              });
             alert('新規登録しました');
         }
