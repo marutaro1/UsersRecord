@@ -47,6 +47,7 @@
         },
         methods: {
             addRecords(uid) {
+                if(this.day === '' || this.record === ''){ return }
                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
                 day: this.day,
                 record: this.record,
@@ -82,18 +83,8 @@
                 });
                 console.log('get');
             },
-            ge() {
-                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
-                const ob = {}
-                querySnapshot.forEach(doc => {
-                //querySnapshotが現在の全体のデータ
-                    ob[this.RecordID] = doc.data()
-                })
-                this.dayRecords = ob
-                console.log(this.dayRecords);
-            })
-            },
            updateRecord(recID) {
+               if(this.newDay === '' || this.newRecord === ''){ return }
                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 record: this.newRecord

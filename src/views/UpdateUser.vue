@@ -53,6 +53,7 @@
         },
         methods: {
              updateProfile() {
+                if(this.name === '' || this.number === ''|| this.careLevel === '' || this.birthday === ''){ return }
                 this.db.collection('users').doc(this.userProfile[0][0]).update({
                 name: this.newName,
                 birthday: this.newBirthday,

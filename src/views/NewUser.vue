@@ -45,7 +45,7 @@ export default {
     mixins: [MixinUsersRecord],
     methods: {
         addUser() {
-            if(this.name === '' || this.number === ''|| this.checBox === ''|| this.careLevel === '' || this.birthday === ''){ return }
+            if(this.name === '' || this.number === '' || this.careLevel === '' || this.birthday === ''){ return }
             this.usersRef.add({
              name: this.name,
              birthday: this.birthday,

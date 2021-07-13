@@ -51,6 +51,7 @@
      });
      },
      updateArchive(No) {
+        if(this.newArchive === ''){ return }
          this.db.collection('users').doc('users-record').collection('archives').doc(No).update({
              archive: this.newArchive
          }).then(res => {
