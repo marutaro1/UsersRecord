@@ -9,7 +9,7 @@
         <textarea id="record" v-model="record"></textarea>
         <p>{{_uid}}</p>
         <br>
-        <button @click="getRecords">更新</button>
+        <button @click="getRecord">更新</button>
         <button @click="addRecords(_uid);">追加</button>
         <hr>
         <div>
@@ -37,7 +37,6 @@
     </div>
 </template>
 <script>
-    import axios from 'axios';
     import firebase from 'firebase';
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
@@ -88,25 +87,16 @@
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
                     obj[doc.id] = doc.data()
-                    //doc.idはランダムな文字列のid
                 })
                 this.records = obj
-                console.log(this.records)
               })
-            },
-            getRecords() {
-                axios.get(
-                'https://firestore.googleapis.com/v1/projects/users-record/databases/(default)/documents/users/users-record/' + this.userProfile[0][0],
-                ).then(res => {
-                    this.dayRecords = res.data.documents;
-                });
-                console.log('get');
             },
            updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
-                record: this.newRecord
+                record: this.newRecord,
+                staffName: this.staffName
                 }).then(
                     res => {
                         if(res === res) {

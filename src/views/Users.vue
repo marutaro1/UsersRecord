@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3>利用者一覧</h3>
-        <button @click="checkB">staff</button>
+        <button @click="checkA">staff</button>
         <label>利用者名検索: </label>
         <input type="text" v-model="keyword">
         <div v-for="user in serchUsers" :key="user.key">
@@ -44,7 +44,7 @@
                this.users = result
             },
             checkA() {
-                console.log(this.usersLists)
+                console.log(Object.entries(this.users))
             },
             checkB() {
                 console.log(this.staffName)

@@ -18,7 +18,8 @@ import firebase from 'firebase';
                 newRecord: '',
                 recordID: this._uid,
                 dayRecords: {},
-                staffName: ''
+                staffName: '',
+                archives: {},
             }
         },
         created() {
@@ -49,13 +50,6 @@ import firebase from 'firebase';
             idToken() {
                 return this.$store.getters.idToken;
             },
-            addStaffName() {
-                firebase.auth().onAuthStateChanged(staff => {
-                 this.staff = staff ? staff : {}
-                 this.staffName = this.staff.displayName
-                })
-                return this.staffName
-             },
         },
         methods: {
             objectUsers() {
