@@ -1,78 +1,63 @@
 <template>
-    <div @mousemove.once="getArchives">
+  <div @mousemove.once="getArchives">
+  <hr>
   <h2>記録まとめ</h2>
-  
-   <hr>
-    <label for="newArchive">更新用:</label>
+  <label for="newArchive">更新用:</label>
     <textarea v-model="newArchive"></textarea>
     <hr>
-   <div v-for="record of sortArchives" :key="record.userNumber">
-   <label>部屋番号:</label>
-    {{record.fields.userNumber.stringValue}}
-    <br>
-   <label>名前:</label>
-    {{record.fields.userName.stringValue}}様
-    <br>
-    <label>記録:</label>
-    {{record.fields.archive.stringValue}}
-    <br>
-    <button @click="updateArchive(record.fields.userNumber.stringValue)">更新</button>
-    <button @click="deleteRecord(record.fields.userNumber.stringValue)">削除</button>
-    <hr>
-   </div>
+    <div v-for="(rec,key) in archivesPost" :key="key">
+      <hr>
+      部屋番号: {{parseInt(rec.userNumber / 10)}}
+      <br>
+      名前: {{rec.userName}}
+      <br>
+      記録: {{rec.archive}}
+      <br>
+      <button @click="updateArchive(rec.userNumber)">更新</button>
+    <button @click="deleteRecord(rec.userNumber)">削除</button>
+    </div>
   </div>
 </template>
 <script>
-  import axios from 'axios';
   import { MixinUsersRecord } from '@/MixinUsersRecord.js';
   export default {
    mixins: [MixinUsersRecord],
    data() {
      return {
        newArchive: '',
-       archivesPost: []
+       archivesPost: {}
      };
-   },
-   computed: {
-     sortArchives() {
-       return this.archivesPost.slice().sort((a, b) => {
-                    return Number(a.fields.userNumber.stringValue) - Number(b.fields.userNumber.stringValue);
-                });
-     }
-   },
-   methods: {
-     getArchives() {
-       axios.get(
-         'https://firestore.googleapis.com/v1/projects/users-record/databases/(default)/documents/users/users-record/archives',
-       ).then(res => {
-         console.log(res.data.documents);  
-         this.archivesPost = res.data.documents
-         console.log(this.archivesPost);  
-     });
-     },
-     updateArchive(No) {
+    },
+    methods: {
+      getArchives() {
+         this.db.collection('users').doc('users-record').collection('archives').onSnapshot(querySnapshot => {
+                const obj = {}
+                querySnapshot.forEach(doc => {
+                //querySnapshotが現在の全体のデータ
+                    obj[doc.id] = doc.data()
+                })
+                this.archivesPost = obj
+                console.log(this.archivesPost)
+              })
+      },
+      updateArchive(No) {
         if(this.newArchive === ''){ return }
          this.db.collection('users').doc('users-record').collection('archives').doc(No).update({
              archive: this.newArchive
          }).then(res => {
-                alert('更新しました。');
                 if(res === res) {
-                this.$router.go();
+                alert('更新しました。');
                 }
             });
      },
      deleteRecord(No) {
       this.db.collection('users').doc('users-record').collection('archives').doc(No).delete()
       .then(res => {
-        if(res === res) {
-          this.$router.go();     
-        }
+        if(res === res) {     
         alert('記録まとめから外しました。');
+        }
       });
-     },
-     check() {
-       console.log(this.sortArchives);
      }
     }
-  }
+  };
 </script>

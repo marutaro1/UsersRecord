@@ -1,5 +1,5 @@
 <template>
-    <div @mousemove.once="getRecords">
+    <div @mousemove.once="getRecord">
         <router-link :to="'/User/' + id + '/UpdateUser'">利用者情報更新</router-link>
         <h3>記録</h3>
         <label for="day">日付: </label>
@@ -21,16 +21,16 @@
             <textarea id="newRecord" v-model="newRecord"></textarea>
          </div>
          <div id="scroll">
-            <div v-for="(rec, key) in dayRecords" :key="key">
+            <div v-for="(rec, key) in records" :key="key">
             <hr>
-            {{rec.fields.day.stringValue}}
+            {{rec.day}}
             <br>
-            {{rec.fields.record.stringValue}}
-            
+            {{rec.record}}
+            <p>登録者 {{rec.staffName}}</p>
 
-            <button @click="updateRecord(rec.fields.recordID.integerValue);">更新</button>
-            <button @click="deleteRecord(rec.fields.recordID.integerValue);">削除</button>
-            <button @click="addArchives(rec.fields.record.stringValue)">
+            <button @click="updateRecord(String(rec.recordID));">更新</button>
+            <button @click="deleteRecord(String(rec.recordID));">削除</button>
+            <button @click="addArchives(rec.record)">
             『記録まとめ』へ上書き</button>
             </div>
          </div>
@@ -38,12 +38,17 @@
 </template>
 <script>
     import axios from 'axios';
+    import firebase from 'firebase';
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
         created() {
             this._uid = Math.floor( Math.random(this._uid) * 100 );
+            firebase.auth().onAuthStateChanged(staff => {
+                 this.staff = staff ? staff : {}
+                 this.staffName = this.staff.displayName
+                });
         },
         methods: {
             addRecords(uid) {
@@ -51,14 +56,16 @@
                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
                 day: this.day,
                 record: this.record,
-                recordID: uid
+                recordID: uid,
+                staffName: this.staffName
                 }).then(
                     res => {
+                    console.log(res);
                     if(res === res) {    
                              
                              alert('追加しました。')
                          }
-                      this.getRecords()
+                      this.getRecord()
                     }
                 );
                 this.day = '',
@@ -71,9 +78,21 @@
                          if(res === res) { 
                              alert('削除しました。')
                          }
-                         this.getRecords()
+                         this.getRecord()
                      }
                  );  
+            },
+            getRecord() {
+              this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+                const obj = {}
+                querySnapshot.forEach(doc => {
+                //querySnapshotが現在の全体のデータ
+                    obj[doc.id] = doc.data()
+                    //doc.idはランダムな文字列のid
+                })
+                this.records = obj
+                console.log(this.records)
+              })
             },
             getRecords() {
                 axios.get(
@@ -93,7 +112,7 @@
                         if(res === res) {
                         alert('更新しました。');
                         }
-                    this.getRecords()
+                    this.getRecord()
                     }
                );
                this.newDay = ''
@@ -114,7 +133,10 @@
                     alert('追加しました');
                 }
                );
-             }
+             },
+             checkB() {
+                console.log(this.staffName)
+            }
         }
 
     };

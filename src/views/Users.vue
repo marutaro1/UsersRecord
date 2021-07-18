@@ -1,6 +1,7 @@
 <template>
     <div>
         <h3>利用者一覧</h3>
+        <button @click="checkB">staff</button>
         <label>利用者名検索: </label>
         <input type="text" v-model="keyword">
         <div v-for="user in serchUsers" :key="user.key">
@@ -46,7 +47,7 @@
                 console.log(this.usersLists)
             },
             checkB() {
-                console.log(this.sortNumber)
+                console.log(this.staffName)
             }
         },
 

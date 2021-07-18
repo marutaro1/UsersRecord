@@ -8,8 +8,8 @@
         <input type="number" id="newNumber" v-model="newNumber">
         <br>
         <label>部屋内番号: </label>
-        <select id="roomCheck" v-model="roomCheck">
-            <option value="" selected="selected">0</option>
+        <select id="roomCheck" v-model="newRoomCheck">
+            <option value="0" selected="selected">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -53,7 +53,7 @@
         },
         methods: {
              updateProfile() {
-                if(this.name === '' || this.number === ''|| this.careLevel === '' || this.birthday === ''){ return }
+                if(this.newName === '' || this.newNumber === ''|| this.newCareLevel === '' || this.newBirthday === ''){ return }
                 this.db.collection('users').doc(this.userProfile[0][0]).update({
                 name: this.newName,
                 birthday: this.newBirthday,

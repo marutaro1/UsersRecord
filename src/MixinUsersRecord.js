@@ -13,10 +13,12 @@ import firebase from 'firebase';
                 users: {},
                 day: '',
                 record: '',
+                records: {},
                 newDay: '',
                 newRecord: '',
                 recordID: this._uid,
                 dayRecords: {},
+                staffName: ''
             }
         },
         created() {
@@ -43,7 +45,17 @@ import firebase from 'firebase';
                     var ageDate = new Date(ageTime);
                     return ageDate.getUTCFullYear() - 1970;
                 }
-            }
+            },
+            idToken() {
+                return this.$store.getters.idToken;
+            },
+            addStaffName() {
+                firebase.auth().onAuthStateChanged(staff => {
+                 this.staff = staff ? staff : {}
+                 this.staffName = this.staff.displayName
+                })
+                return this.staffName
+             },
         },
         methods: {
             objectUsers() {
@@ -54,6 +66,14 @@ import firebase from 'firebase';
                   }
                 })
                 this.users = result
-              }
+            },
+            doLogin() {
+                var provider = new firebase.auth.GoogleAuthProvider()
+                firebase.auth().signInWithPopup(provider)
+            },
+            logOut() {
+                firebase.auth().signOut()
+            },
+            
         }
     };
