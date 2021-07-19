@@ -6,7 +6,7 @@ import User from './views/User.vue';
 import Records from './views/Records.vue';
 import UpdateUser from './views/UpdateUser.vue';
 import Archives from './views/Archives.vue';
-import Login from './views/Login.vue';
+
 
 Vue.use(Router);
 
@@ -22,6 +22,5 @@ export default new Router({
         ]
         },
         {path: '/Archives', component: Archives, props: true},
-        {path: '/Login', component: Login, props: true}
     ]
 });

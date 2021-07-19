@@ -20,6 +20,7 @@ import firebase from 'firebase';
                 dayRecords: {},
                 staffName: '',
                 archives: {},
+                authentication: ''
             }
         },
         created() {
@@ -33,7 +34,23 @@ import firebase from 'firebase';
                     //doc.idはランダムな文字列のid
                 })
                 this.users = obj
-            })
+            });
+
+            firebase.auth().onAuthStateChanged(staff => {
+                this.staff = staff ? staff : {}
+                this.staffName = this.staff.displayName
+            });
+        },
+        mounted() {
+            firebase.auth().onAuthStateChanged(staff => {
+                if(staff) {
+                    console.log('login');
+                    this.authentication = true;
+                } else {
+                    console.log('logout');
+                    this.authentication = false;
+                }
+            });
         },
         computed: {
             userProfile() {
@@ -67,7 +84,8 @@ import firebase from 'firebase';
             },
             logOut() {
                 firebase.auth().signOut()
-            },
-            
+                alert('ログアウトしました。')
+                this.$router.go('/')
+            }
         }
     };

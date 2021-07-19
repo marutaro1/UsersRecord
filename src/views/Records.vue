@@ -37,17 +37,12 @@
     </div>
 </template>
 <script>
-    import firebase from 'firebase';
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
         created() {
             this._uid = Math.floor( Math.random(this._uid) * 100 );
-            firebase.auth().onAuthStateChanged(staff => {
-                 this.staff = staff ? staff : {}
-                 this.staffName = this.staff.displayName
-                });
         },
         methods: {
             addRecords(uid) {
