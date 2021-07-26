@@ -39,6 +39,7 @@ import firebase from 'firebase';
             firebase.auth().onAuthStateChanged(staff => {
                 this.staff = staff ? staff : {}
                 this.staffName = this.staff.displayName
+                
             });
         },
         mounted() {

@@ -1,15 +1,32 @@
 <template>
-    <div>
-        <h3>利用者一覧</h3>
-        <button @click="checkA">staff</button>
-        <label>利用者名検索: </label>
-        <input type="text" v-model="keyword">
-        <div v-for="user in serchUsers" :key="user.key">
-            <hr>
-            <p>部屋番号: {{parseInt(user.value.number / 10)}}号室</p>
-            <p>年齢: {{age(user.value.birthday)}}歳</p>
-            <router-link :to="'/User/' + user.value.number + '/Records'">{{user.value.name}}様</router-link>
+    <div class="mt-2">
+        <h2>利用者一覧</h2>
+        <label class="col-5 col-form-label">利用者名検索: </label>
+        <div class="col-5">
+            <input type="text" v-model="keyword" class="form-control">
         </div>
+       
+        <div class="scroll-user">       
+           <div v-for="user in serchUsers" :key="user.key">
+           <table class="table col-1">
+                <hr>
+                <tr>
+                <th class="text-rightr">
+                    <router-link :to="'/User/' + user.value.number + '/Records'">{{user.value.name}}様</router-link>
+                </th>
+                </tr>
+                <td class="text-right col-1">
+                部屋番号: {{parseInt(user.value.number / 10)}}号室
+                <br>
+                年齢: {{age(user.value.birthday)}}歳
+                <br>
+                要介護度:{{user.value.careLevel}}
+                </td>
+
+            </table>
+            </div>
+        </div>       
+
     </div>
 </template>
 <script>
@@ -42,14 +59,15 @@
                const arr = Object.entries(this.users)
                const result = arr.map(([key, value]) => ({key, value}))
                this.users = result
-            },
-            checkA() {
-                console.log(Object.entries(this.users))
-            },
-            checkB() {
-                console.log(this.staffName)
             }
-        },
+        }
 
     };
 </script>
+<style>
+    .scroll-user {
+        height: 600px;
+        overflow: hidden;
+        overflow-y: scroll;
+    }
+</style>

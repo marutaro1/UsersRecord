@@ -1,37 +1,49 @@
 <template>
     <div @mousemove.once="getRecord">
-        <router-link :to="'/User/' + id + '/UpdateUser'">利用者情報更新</router-link>
-        <h3>記録</h3>
-        <label for="day">日付: </label>
-        <input type="datetime-local" id="day" v-model="day">
-        <br>
-        <label for="record">記録: </label>
-        <textarea id="record" v-model="record"></textarea>
-        <p>{{_uid}}</p>
-        <br>
-        <button @click="getRecord">更新</button>
-        <button @click="addRecords(_uid);">追加</button>
+        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
+        <hr>
+        <h4>記録</h4>
+        <div class="m-0">
+            <label class="col-2 col-form-label">日付: </label>
+            <div class="col-5">
+                <input type="datetime-local" v-model="day" class="form-control">
+            </div>
+            <br>
+            <label class="col-3 col-form-label">記録: </label>
+            <div class="col-12">
+                <textarea v-model="record" class="form-control"></textarea>
+            </div>
+            <br>
+            <button @click="addRecords(_uid)" class="btn btn-primary">追加</button>
+        </div>
         <hr>
         <div>
             <h4>更新用フォーム</h4>
-            <label for="newDay">日付: </label>
-            <input type="datetime-local" id="newDay" v-model="newDay">
+            <label class="col-2 col-form-label">日付: </label>
+            <div class="col-5">
+                <input type="datetime-local"  v-model="newDay" class="form-control">
+            </div>
             <br>
-            <label for="newRecord">記録: </label>
-            <textarea id="newRecord" v-model="newRecord"></textarea>
+            <label class="col-3 col-form-label">記録: </label>
+            <div class="col-12">
+                <textarea v-model="newRecord" class="form-control"></textarea>
+            </div>
          </div>
-         <div id="scroll">
+         <hr>
+         <div class="scroll">
             <div v-for="(rec, key) in records" :key="key">
-            <hr>
+    
             {{rec.day}}
             <br>
             {{rec.record}}
             <p>登録者 {{rec.staffName}}</p>
 
-            <button @click="updateRecord(String(rec.recordID));">更新</button>
-            <button @click="deleteRecord(String(rec.recordID));">削除</button>
-            <button @click="addArchives(rec.record)">
-            『記録まとめ』へ上書き</button>
+            <button @click="updateRecord(String(rec.recordID))" class="col-2 btn btn-primary">更新</button>
+            <button @click="deleteRecord(String(rec.recordID))" class="col-2 btn btn-primary mx-1">削除</button>
+            <button @click="addArchives(rec.record)" class="col-7 btn btn-primary">
+            『記録まとめ』へ上書き
+            </button>
+            <hr>
             </div>
          </div>
     </div>
@@ -126,10 +138,3 @@
 
     };
 </script>
-<style>
-    #scroll {
-        height: 200px;
-        overflow: hidden;
-        overflow-y: scroll;
-    }
-</style>
