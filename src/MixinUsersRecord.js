@@ -22,6 +22,7 @@ import firebase from 'firebase';
                 archives: {},
                 authentication: '',
                 manuel: '',
+                history: '',
             }
         },
         created() {

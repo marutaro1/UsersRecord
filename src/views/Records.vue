@@ -2,11 +2,12 @@
     <div @mousemove.once="getRecord">
         <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
         <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
+        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
         <hr>
         <h4>記録</h4>
         <div class="m-0">
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-5">
+            <div class="col-7">
                 <input type="datetime-local" v-model="day" class="form-control">
             </div>
             <br>
@@ -21,7 +22,7 @@
         <div>
             <h4>更新用フォーム</h4>
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-5">
+            <div class="col-7">
                 <input type="datetime-local"  v-model="newDay" class="form-control">
             </div>
             <br>

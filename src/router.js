@@ -8,6 +8,7 @@ import Records from './views/Records.vue';
 import UpdateUser from './views/UpdateUser.vue';
 import Archives from './views/Archives.vue';
 import Manuel from './views/Manuel.vue';
+import MedicalHistory from './views/MedicalHistory.vue';
 
 
 Vue.use(Router);
@@ -21,7 +22,8 @@ export default new Router({
         children: [
             {path: '/User/:id/UpdateUser', component: UpdateUser, props: true},
             {path: '/User/:id/Records', component: Records, props: true},
-            {path: '/User/:id/Manuel', component: Manuel, props: true}
+            {path: '/User/:id/Manuel', component: Manuel, props: true},
+            {path: '/User/:id/MedicalHistory', component: MedicalHistory, props: true}
         ]
         },
         {path: '/Archives', component: Archives, props: true},

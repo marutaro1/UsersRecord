@@ -20,7 +20,8 @@
             <div v-for="(m,key) in manuelPost" :key="key">
             内容： {{m.manuel}}
             <br>
-            <button @click="updateManuel(key)" class="btn btn-primary px-0 col-3 mt-2">更新</button>
+            <button @click="updateManuel(key)" class="btn btn-primary px-0 col-2 mt-2">更新</button>
+            <button @click="deleteManuel(key)" class="btn btn-primary px-0 col-2 mt-2 mx-1">削除</button>
             <hr>
             </div>
         </div>
@@ -60,6 +61,9 @@ export default {
             this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).update({
                 manuel: this.newManuel
             });
+        },
+        deleteManuel(manuelID) {
+                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).delete()
         }
     }
 };
