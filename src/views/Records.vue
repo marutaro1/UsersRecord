@@ -1,6 +1,7 @@
 <template>
     <div @mousemove.once="getRecord">
         <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
+        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
         <hr>
         <h4>記録</h4>
         <div class="m-0">
@@ -38,9 +39,9 @@
             {{rec.record}}
             <p>登録者 {{rec.staffName}}</p>
 
-            <button @click="updateRecord(String(rec.recordID))" class="col-2 btn btn-primary">更新</button>
-            <button @click="deleteRecord(String(rec.recordID))" class="col-2 btn btn-primary mx-1">削除</button>
-            <button @click="addArchives(rec.record)" class="col-7 btn btn-primary">
+            <button @click="updateRecord(String(rec.recordID))" class="col-2 btn btn-primary px-0">更新</button>
+            <button @click="deleteRecord(String(rec.recordID))" class="col-2 btn btn-primary px-0 mx-1">削除</button>
+            <button @click="addArchives(rec.record)" class="col-7 btn btn-primary px-0">
             『記録まとめ』へ上書き
             </button>
             <hr>
@@ -53,9 +54,6 @@
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
-        created() {
-            this._uid = Math.floor( Math.random(this._uid) * 100 );
-        },
         methods: {
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }

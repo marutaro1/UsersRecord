@@ -20,7 +20,8 @@ import firebase from 'firebase';
                 dayRecords: {},
                 staffName: '',
                 archives: {},
-                authentication: ''
+                authentication: '',
+                manuel: '',
             }
         },
         created() {
@@ -41,6 +42,7 @@ import firebase from 'firebase';
                 this.staffName = this.staff.displayName
                 
             });
+            this._uid = Math.floor( Math.random(this._uid) * 100 );
         },
         mounted() {
             firebase.auth().onAuthStateChanged(staff => {
