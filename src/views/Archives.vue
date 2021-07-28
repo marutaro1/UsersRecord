@@ -16,7 +16,7 @@
         記録: {{rec.archive}}
         <br>
         <button @click="updateArchive(rec.userNumber)" class="btn btn-primary mt-1">更新</button>
-        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">削除</button>
+        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">外す</button>
       </div>
     </div>
   </div>
@@ -47,19 +47,12 @@
         if(this.newArchive === ''){ return }
          this.db.collection('users').doc('users-record').collection('archives').doc(No).update({
              archive: this.newArchive
-         }).then(res => {
-                if(res === res) {
-                alert('更新しました。');
-                }
-            });
+         });
+         alert('更新しました。');
      },
      deleteRecord(No) {
-      this.db.collection('users').doc('users-record').collection('archives').doc(No).delete()
-      .then(res => {
-        if(res === res) {     
-        alert('記録まとめから外しました。');
-        }
-      });
+      this.db.collection('users').doc('users-record').collection('archives').doc(No).delete();     
+      alert('記録まとめから外しました。');
      }
     }
   };

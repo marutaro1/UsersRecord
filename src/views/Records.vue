@@ -1,5 +1,6 @@
 <template>
     <div @mousemove.once="getRecord">
+       
         <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
         <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
         <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
@@ -7,7 +8,7 @@
         <h4>記録</h4>
         <div class="m-0">
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-7">
+            <div class="col-8">
                 <input type="datetime-local" v-model="day" class="form-control">
             </div>
             <br>
@@ -22,7 +23,7 @@
         <div>
             <h4>更新用フォーム</h4>
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-7">
+            <div class="col-8">
                 <input type="datetime-local"  v-model="newDay" class="form-control">
             </div>
             <br>
@@ -33,16 +34,16 @@
          </div>
          <hr>
          <div class="scroll">
-            <div v-for="(rec, key) in records" :key="key">
+            <div v-for="(rec, key) in sortRecords" :key="key">
     
-            {{rec.day}}
+            {{rec.value.day}}
             <br>
-            {{rec.record}}
-            <p>登録者 {{rec.staffName}}</p>
+            {{rec.value.record}}
+            <p>登録者 {{rec.value.staffName}}</p>
 
-            <button @click="updateRecord(String(rec.recordID))" class="col-2 btn btn-primary px-0">更新</button>
-            <button @click="deleteRecord(String(rec.recordID))" class="col-2 btn btn-primary px-0 mx-1">削除</button>
-            <button @click="addArchives(rec.record)" class="col-7 btn btn-primary px-0">
+            <button @click="updateRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0">更新</button>
+            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0 mx-1">削除</button>
+            <button @click="addArchives(rec.value.record)" class="col-7 btn btn-primary px-0">
             『記録まとめ』へ上書き
             </button>
             <hr>
@@ -55,7 +56,23 @@
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
+        computed: {
+            recordsLists() {
+                this.recordsList();
+                return this.records;
+            },
+            sortRecords(){
+                return this.recordsLists.slice().sort((a, b) => {
+                    return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
+                });
+            }
+        },
         methods: {
+            recordsList() {
+               const arr = Object.entries(this.records)
+               const result = arr.map(([key, value]) => ({key, value}))
+               this.records = result
+            },
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }
                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
@@ -78,14 +95,9 @@
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
             },
             deleteRecord(recID) {
-                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(
-                     res => {
-                         if(res === res) { 
-                             alert('削除しました。')
-                         }
-                         this.getRecord()
-                     }
-                 );  
+                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete();
+                 alert('削除しました')
+                 this.getRecord() 
             },
             getRecord() {
               this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
@@ -103,32 +115,19 @@
                 day: this.newDay,
                 record: this.newRecord,
                 staffName: this.staffName
-                }).then(
-                    res => {
-                        if(res === res) {
-                        alert('更新しました。');
-                        }
-                    this.getRecord()
-                    }
-               );
+                });
+               alert('更新しました');
+               this.getRecord()
                this.newDay = ''
                this.newRecord = ''
-            },
-            a() {
-                var i = this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).id
-                console.log(i);
-                console.log(this.userProfile);
             },
              addArchives(record) {
                this.db.collection('users').doc('users-record').collection('archives').doc(this.id).set({
                 userName: this.userName,
                 userNumber: this.id,
                 archive: record
-                }).then(
-                function() {
-                    alert('追加しました');
-                }
-               );
+                });
+                alert('追加しました');
              },
              checkB() {
                 console.log(this.staffName)

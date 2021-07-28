@@ -40,8 +40,8 @@
         },
         computed: {
             usersLists() {
-                this.usersList()
-                return this.users
+                this.usersList();
+                return this.users;
             },
             sortNumber() {
                 return this.usersLists.slice().sort((a, b) => {

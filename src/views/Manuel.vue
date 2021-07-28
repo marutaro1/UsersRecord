@@ -43,7 +43,8 @@ export default {
             if(this.manuel === ''){ return }
                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(String(this._uid)).set({
                     manuel: this.manuel
-                })
+                });
+            alert('追加しました')
             this.manuel = ""
             this._uid = Math.floor( Math.random(this._uid) * 100 )
         },
@@ -61,9 +62,12 @@ export default {
             this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).update({
                 manuel: this.newManuel
             });
+            alert('更新しました')
+            this.newManuel = ''
         },
         deleteManuel(manuelID) {
-                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).delete()
+                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).delete();
+                 alert('削除しました')
         }
     }
 };

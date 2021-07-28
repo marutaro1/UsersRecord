@@ -1,5 +1,6 @@
 <template>
     <div>
+        <router-link :to="'/User/' + id + '/records'" class="btn btn-primary">記録へ戻る</router-link>
         <hr>
         <h3>利用者情報更新</h3>
         <label class="col-4 col-form-label"> 名前: </label>
@@ -42,7 +43,6 @@
    
         <br>
         <button @click="updateProfile" class="btn btn-primary">更新</button>
-        <router-link :to="'/User/' + id + '/records'" class="btn btn-primary mx-2">記録へ戻る</router-link>
 
     </div>
 </template>
