@@ -9,6 +9,8 @@ import UpdateUser from './views/UpdateUser.vue';
 import Archives from './views/Archives.vue';
 import Manuel from './views/Manuel.vue';
 import MedicalHistory from './views/MedicalHistory.vue';
+import SignUp from './views/SignUp.vue';
+
 
 
 Vue.use(Router);
@@ -17,6 +19,7 @@ export default new Router({
     mode: 'history',
     routes: [
         {path: '/', component: Users},
+        {path: '/SignUp', component: SignUp},
         {path: '/NewUser', component: NewUser},
         {path: '/User/:id', component: User, props: true,
         children: [
@@ -27,5 +30,6 @@ export default new Router({
         ]
         },
         {path: '/Archives', component: Archives, props: true},
+        
     ]
 });

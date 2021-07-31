@@ -16,7 +16,7 @@
         記録: {{rec.archive}}
         <br>
         <button @click="updateArchive(rec.userNumber)" class="btn btn-primary mt-1">更新</button>
-        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">外す</button>
+        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">まとめから削除</button>
       </div>
     </div>
   </div>

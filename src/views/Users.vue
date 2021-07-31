@@ -5,11 +5,10 @@
         <div class="col-5">
             <input type="text" v-model="keyword" class="form-control">
         </div>
-       
+        <hr>
         <div class="scroll-user">       
            <div v-for="user in serchUsers" :key="user.key">
            <table class="table col-1">
-                <hr>
                 <tr>
                 <th class="text-rightr">
                     <router-link :to="'/User/' + user.value.number + '/Records'">{{user.value.name}}様</router-link>
@@ -22,8 +21,8 @@
                 <br>
                 要介護度:{{user.value.careLevel}}
                 </td>
-
             </table>
+            <hr>
             </div>
         </div>       
 
@@ -33,11 +32,6 @@
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
         mixins: [MixinUsersRecord],
-        data() {
-            return {
-                keyword: ''
-            };
-        },
         computed: {
             usersLists() {
                 this.usersList();
@@ -52,7 +46,8 @@
                 return this.sortNumber.filter(user => {
                     return user.value.name.includes(this.keyword);
                 });
-            }
+            },
+            
         },
         methods:{
             usersList() {

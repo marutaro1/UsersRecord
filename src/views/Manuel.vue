@@ -6,7 +6,7 @@
             <label class="col-form-label col-5">マニュアル追加</label>
             <textarea v-model="manuel" class="form-control"></textarea>
             <br>
-            <button @click="addManuel" class="btn btn-primary ">追加</button>
+            <button @click="addManuel(_uid)" class="btn btn-primary ">追加</button>
         </div>
         <hr>
         <div class="col-12">
@@ -15,13 +15,16 @@
         </div>
         <hr>
         <h3>マニュアル一覧</h3> 
-        <hr>        
+         <label class="col-3 col-form-label">キーワード検索:</label>
+         <div class="col-6 mb-2">
+            <input type="text" v-model="keyword" class="form-control">
+         </div>          
         <div class="col-12 scroll">
-            <div v-for="(m,key) in manuelPost" :key="key">
-            内容： {{m.manuel}}
-            <br>
-            <button @click="updateManuel(key)" class="btn btn-primary px-0 col-2 mt-2">更新</button>
-            <button @click="deleteManuel(key)" class="btn btn-primary px-0 col-2 mt-2 mx-1">削除</button>
+            <div v-for="(m,key) in serchManuel" :key="key">
+            <p style="white-space:pre-wrap; word-wrap:break-word;">{{m.value.manuel}}</p>
+    
+            <button @click="updateManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2 mt-2">更新</button>
+            <button @click="deleteManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2 mt-2 mx-1">削除</button>
             <hr>
             </div>
         </div>
@@ -38,11 +41,28 @@ export default {
        manuelPost: {}
      };
     },
+    computed: {
+        manuelLists() {
+            this.manuelList();
+            return this.manuelPost;
+        },
+        serchManuel() {
+                return this.manuelLists.filter(m => {
+                    return m.value.manuel.includes(this.keyword);
+                });
+        }
+    },
     methods: {
-        addManuel() {
+         manuelList() {
+               const arr = Object.entries(this.manuelPost)
+               const result = arr.map(([key, value]) => ({key, value}))
+               this.manuelPost = result
+         },
+        addManuel(uid) {
             if(this.manuel === ''){ return }
-                this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(String(this._uid)).set({
-                    manuel: this.manuel
+                this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(String(uid)).set({
+                    manuel: this.manuel,
+                    manuelID: uid
                 });
             alert('追加しました')
             this.manuel = ""
@@ -59,14 +79,14 @@ export default {
         },
         updateManuel(manuelID) {
              if(this.newManuel === ''){ return }
-            this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).update({
+            this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).update({
                 manuel: this.newManuel
             });
             alert('更新しました')
             this.newManuel = ''
         },
         deleteManuel(manuelID) {
-                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(manuelID).delete();
+                 this.db.collection('users').doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).delete();
                  alert('削除しました')
         }
     }

@@ -27,14 +27,15 @@
         </div>
         <hr>
         <h3>既往歴</h3> 
-        <hr>        
+        <hr>
+        <label class="col-3 col-form-label">病名検索:</label>
+         <div class="col-6 mb-2">
+            <input type="text" v-model="keyword" class="form-control">
+         </div>      
         <div class="col-12 scroll">
-            <div v-for="(h,key) in sortHistory" :key="key">
-            発症日: {{h.value.day}}
-            <br>
-            病名: {{h.value.history}}
-  
-            {{h.value.historyID}}
+            <div v-for="(h,key) in serchHistory" :key="key">
+            <p>発症日: {{h.value.day}}</p>
+            <p>病名: {{h.value.history}}</p>
             <br>
             <button @click="updateHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 mt-2">更新</button>
             <button @click="deleteHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 mt-2 mx-1">削除</button>
@@ -64,7 +65,12 @@ export default {
                 return this.historyLists.slice().sort((a, b) => {
                     return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
                 });
-            }
+            },
+            serchHistory() {
+                return this.sortHistory.filter(rec => {
+                    return rec.value.history.includes(this.keyword);
+                });
+            },
         },
     methods: {
         historyList() {

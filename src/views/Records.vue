@@ -33,13 +33,16 @@
             </div>
          </div>
          <hr>
+         <label class="col-3 col-form-label">キーワード検索:</label>
+         <div class="col-6 mb-2">
+            <input type="text" v-model="keyword" class="form-control">
+         </div>
          <div class="scroll">
-            <div v-for="(rec, key) in sortRecords" :key="key">
+            <div v-for="(rec, key) in serchRecords" :key="key">
     
-            {{rec.value.day}}
-            <br>
-            {{rec.value.record}}
-            <p>登録者 {{rec.value.staffName}}</p>
+            <p>{{rec.value.day}}</p>
+            <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
+            <p>登録者: {{rec.value.staffName}}</p>
 
             <button @click="updateRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0">更新</button>
             <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0 mx-1">削除</button>
@@ -56,6 +59,7 @@
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
+       
         computed: {
             recordsLists() {
                 this.recordsList();
@@ -65,7 +69,12 @@
                 return this.recordsLists.slice().sort((a, b) => {
                     return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
                 });
-            }
+            },
+            serchRecords() {
+                return this.sortRecords.filter(rec => {
+                    return rec.value.record.includes(this.keyword);
+                });
+            },
         },
         methods: {
             recordsList() {
@@ -79,7 +88,7 @@
                 day: this.day,
                 record: this.record,
                 recordID: uid,
-                staffName: this.staffName
+                staffName: this.displayStaffName
                 }).then(
                     res => {
                     console.log(res);
@@ -108,13 +117,14 @@
                 })
                 this.records = obj
               })
+              console.log(this.displayStaffName);
             },
            updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 record: this.newRecord,
-                staffName: this.staffName
+                staffName: this.displayStaffName
                 });
                alert('更新しました');
                this.getRecord()
@@ -128,10 +138,7 @@
                 archive: record
                 });
                 alert('追加しました');
-             },
-             checkB() {
-                console.log(this.staffName)
-            }
+             }
         }
 
     };

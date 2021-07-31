@@ -18,11 +18,16 @@ import firebase from 'firebase';
                 newRecord: '',
                 recordID: this._uid,
                 dayRecords: {},
+                staffs: {},
                 staffName: '',
+                displayStaffName: '',
                 archives: {},
                 authentication: '',
                 manuel: '',
                 history: '',
+                keyword: '',
+                email: '',
+                password: ''
             }
         },
         created() {
@@ -38,20 +43,17 @@ import firebase from 'firebase';
                 this.users = obj
             });
 
-            firebase.auth().onAuthStateChanged(staff => {
-                this.staff = staff ? staff : {}
-                this.staffName = this.staff.displayName
-                
-            });
+          
             this._uid = Math.floor( Math.random(this._uid) * 100 );
         },
         mounted() {
             firebase.auth().onAuthStateChanged(staff => {
                 if(staff) {
-                    console.log('login');
                     this.authentication = true;
+                    this.staffNameSeek(staff.uid);
+                    
+                    
                 } else {
-                    console.log('logout');
                     this.authentication = false;
                 }
             });
@@ -71,6 +73,7 @@ import firebase from 'firebase';
             idToken() {
                 return this.$store.getters.idToken;
             },
+            
         },
         methods: {
             objectUsers() {
@@ -83,13 +86,26 @@ import firebase from 'firebase';
                 this.users = result
             },
             doLogin() {
-                var provider = new firebase.auth.GoogleAuthProvider()
-                firebase.auth().signInWithPopup(provider)
+                firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+                .then(() => this.$router.push("/"), alert('ログインしました'))
+                .catch((e) => (this.error = e.message));
             },
             logOut() {
                 firebase.auth().signOut()
                 alert('ログアウトしました。')
                 this.$router.go('/')
+            },
+
+            staffNameSeek(staffID) {
+                this.db.collection('users').doc('staffs').collection(staffID).onSnapshot(querySnapshot => {
+                    const obj = {}
+                    querySnapshot.forEach(doc => {
+                    //querySnapshotが現在の全体のデータ
+                        obj[doc.id] = doc.data()
+                    })
+                    this.staffs = obj
+                    this.displayStaffName = this.staffs[staffID].staffName;
+                });
             }
         }
     };

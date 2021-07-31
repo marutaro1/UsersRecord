@@ -9,7 +9,7 @@
         </div>
         <br>
         <label class="col-4 col-form-label"> 部屋番号: </label>
-        <div class="col-md-1 col-3">
+        <div class="col-md-2 col-3">
             <input type="number" v-model="newNumber" class="form-control">
         </div>
         <br>

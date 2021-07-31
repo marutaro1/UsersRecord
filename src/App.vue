@@ -1,20 +1,36 @@
 <template>
   <div class="container">
-    <div v-if="!authentication" style="margin-top: 50%;">
+    <div v-if="!authentication" style="margin-top: 20%;">
         <div class="col-11 bg-light p-3 mx-auto rounded-pill">
-          <h2 class="col-12 text-center display-1  text-black-50">Users-Record</h2>
+          <h2 class="col-12 text-center display-1 text-black-50">Users-Record</h2>
+        </div>
+        <div class="col-12 text-center">
+          <label class="col-5 col-form-label">Eメール</label>
+          <div class="col-7 mx-auto">
+            <input type="text" v-model="email" class="form-control" placeholder="Eメール">
+          </div>
+          <br>
+
+          <label class="col-5 col-form-label">パスワード</label>
+          <div class="col-7 mx-auto">
+            <input type="text" v-model="password" class="form-control" placeholder="パスワード">
+          </div>
         </div>
         <div class="col-12 text-center mt-5 mx-auto">
-          <p @click="doLogin" class="btn btn-primary col-4">ログイン</p>
+          <button @click="doLogin" class="btn btn-primary col-5">ログイン</button>
         </div>
+       
+
     </div>
+   
     <div v-else>
-      <nav class="navbar navbar-expand">
+      <nav class="navbar navbar-expand bg-light mt-2 pt-0 pb-0">
         <ul class="nav nav-tabs col-12">
-          <li class="nav-item col-3"><router-link to="/" class="nav-link p-1 text-center small">利用者一覧</router-link></li>
-          <li class="nav-item col-3"><router-link to="/NewUser" class="nav-link p-1 text-center small">利用者登録</router-link></li>
-          <li class="nav-item col-3"><router-link to="/Archives" class="nav-link p-1 text-center small">記録まとめ</router-link></li>
-          <li @click="logOut" class="nav-item nav-link col-3 p-1 text-center small">ログアウト</li>
+          <li class="nav-item col-2"><router-link to="/" class="nav-link p-0 pb-1 text-center">利用者一覧</router-link></li>
+          <li class="nav-item col-2"><router-link to="/NewUser" class="nav-link p-0 pb-1 text-center">利用者登録</router-link></li>
+          <li class="nav-item col-2"><router-link to="/Archives" class="nav-link p-0 pb-1 text-center">記録まとめ</router-link></li>
+          <li class="nav-item col-2"><router-link to="/SignUp" class="nav-link p-0 pb-1 text-center">職員登録</router-link></li>
+          <li @click="logOut" class="nav-item nav-link col-4 p-0">ログアウト</li>
         </ul>
       </nav>
       <router-view class="container"></router-view>
