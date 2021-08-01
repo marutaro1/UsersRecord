@@ -24,13 +24,15 @@
     </div>
    
     <div v-else>
-      <nav class="navbar navbar-expand bg-light mt-2 pt-0 pb-0">
-        <ul class="nav nav-tabs col-12">
-          <li class="nav-item col-2"><router-link to="/" class="nav-link p-0 pb-1 text-center">利用者一覧</router-link></li>
-          <li class="nav-item col-2"><router-link to="/NewUser" class="nav-link p-0 pb-1 text-center">利用者登録</router-link></li>
-          <li class="nav-item col-2"><router-link to="/Archives" class="nav-link p-0 pb-1 text-center">記録まとめ</router-link></li>
-          <li class="nav-item col-2"><router-link to="/SignUp" class="nav-link p-0 pb-1 text-center">職員登録</router-link></li>
-          <li @click="logOut" class="nav-item nav-link col-4 p-0">ログアウト</li>
+      <nav class="navbar navbar-expand mt-2 pt-0 pb-0 col-12">
+        <ul class="nav nav-tabs col-7 col-lg-10">
+          <li class="nav-item"><router-link to="/" class="nav-link text-center p-0 mx-1">利用者一覧</router-link></li>
+          <li class="nav-item"><router-link to="/NewUser" class="nav-link text-center p-0 mx-1">利用者登録</router-link></li>
+          <li class="nav-item"><router-link to="/Archives" class="nav-link text-center p-0 mx-1">記録まとめ</router-link></li>
+          <li class="nav-item"><router-link to="/SignUp" class="nav-link text-center p-0 mx-1">職員登録</router-link></li>
+        </ul>
+        <ul class="col-5 col-lg-2">
+          <li @click="logOut" class="btn btn-primary text-center p-1">ログアウト</li>
         </ul>
       </nav>
       <router-view class="container"></router-view>

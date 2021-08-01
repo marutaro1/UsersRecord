@@ -16,7 +16,7 @@
             <div class="col-12">
                 <textarea v-model="record" class="form-control"></textarea>
             </div>
-            <br>
+            <button @click="templateRecord" class="btn btn-primary m-1">特変なし</button>
             <button @click="addRecords(_uid)" class="btn btn-primary">追加</button>
         </div>
         <hr>
@@ -138,6 +138,14 @@
                 archive: record
                 });
                 alert('追加しました');
+             },
+             templateRecord() {
+                 const date1 = new Date();
+                 const date2 = date1.getFullYear()  + '-' +
+				("00" + (date1.getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (date1.getDate())).slice(-2)  + 'T' + '17' + ':' + '00';
+                this.day = date2;
+                this.record = '特変なし。';
              }
         }
 

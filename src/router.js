@@ -13,6 +13,7 @@ import SignUp from './views/SignUp.vue';
 
 
 
+
 Vue.use(Router);
 
 export default new Router({

@@ -103,7 +103,7 @@ import firebase from 'firebase';
                     //querySnapshotが現在の全体のデータ
                         obj[doc.id] = doc.data()
                     })
-                    this.staffs = obj
+                    this.staffs = obj;
                     this.displayStaffName = this.staffs[staffID].staffName;
                 });
             }
