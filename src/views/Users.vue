@@ -1,9 +1,25 @@
 <template>
     <div class="mt-2">
         <h2>利用者一覧</h2>
-        <label class="col-5 col-form-label">利用者名検索: </label>
+        <label class="col-5 col-form-label">キーワード検索: </label>
         <div class="col-5">
             <input type="text" v-model="keyword" class="form-control">
+        </div>
+        <div>
+        <label class="col-5 col-form-label">フロア検索: </label>
+        <div class="col-6 col-lg-2">
+            <select v-model="keyword" class="form-select form-select-sm">
+                <option value="" selected="selected">選択してください</option>
+                <option value="3F">3F</option>
+                <option value="4F">4F</option>
+                <option value="5F">5F</option>
+                <option value="6F">6F</option>
+                <option value="7F">7F</option>
+                <option value="8F">8F</option>
+                <option value="9F">9F</option>
+                <option value="10F">10F</option>
+            </select>
+        </div>
         </div>
         <hr>
         <div class="scroll-user">       
@@ -20,6 +36,7 @@
                 年齢: {{age(user.value.birthday)}}歳
                 <br>
                 要介護度:{{user.value.careLevel}}
+            
                 </td>
             </table>
             <hr>
@@ -44,7 +61,9 @@
             },
             serchUsers() {
                 return this.sortNumber.filter(user => {
-                    return user.value.name.includes(this.keyword);
+                    return user.value.name.includes(this.keyword) ||
+                     user.value.floor.includes(this.keyword) ||
+                     user.value.careLevel.includes(this.keyword) ;
                 });
             },
             

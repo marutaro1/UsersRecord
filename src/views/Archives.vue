@@ -2,21 +2,18 @@
   <div @mousemove.once="getArchives" class="mt-2">
   <h2>記録まとめ</h2>
   <label class="col-4 col-form-label">更新用:</label>
-  <div class="col-12">
+  <div class="col-10 col-lg-7">
     <textarea v-model="newArchive" class="form-control"></textarea>
   </div>
     <hr>
     <div class="scroll-archives">
       <div v-for="(rec,key) in archivesPost" :key="key">
-        <hr>
-        部屋番号: {{parseInt(rec.userNumber / 10)}}
-        <br>
-        名前: {{rec.userName}}様
-        <br>
-        記録: {{rec.archive}}
-        <br>
+        <p>部屋番号: {{parseInt(rec.userNumber / 10)}}</p>
+        <p>名前: {{rec.userName}}様</p>
+        <p>記録: {{rec.archive}}</p>
         <button @click="updateArchive(rec.userNumber)" class="btn btn-primary mt-1">更新</button>
         <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">まとめから削除</button>
+        <hr>
       </div>
     </div>
   </div>
@@ -33,7 +30,7 @@
     },
     methods: {
       getArchives() {
-         this.db.collection('users').doc('users-record').collection('archives').onSnapshot(querySnapshot => {
+         this.usersRef.doc('users-record').collection('archives').onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
@@ -45,13 +42,14 @@
       },
       updateArchive(No) {
         if(this.newArchive === ''){ return }
-         this.db.collection('users').doc('users-record').collection('archives').doc(No).update({
+         this.usersRef.doc('users-record').collection('archives').doc(No).update({
              archive: this.newArchive
          });
          alert('更新しました。');
+         this.newArchive = '';
      },
      deleteRecord(No) {
-      this.db.collection('users').doc('users-record').collection('archives').doc(No).delete();     
+      this.usersRef.doc('users-record').collection('archives').doc(No).delete();     
       alert('記録まとめから外しました。');
      }
     }

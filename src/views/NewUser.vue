@@ -1,22 +1,21 @@
 <template>
     <div class="mt-2">
 
-        <h3>新規利用者登録</h3>
+        <h2>新規利用者登録</h2>
         <label class="col-4 col-form-label"> 名前: </label>
-        <div class="col-md-2 col-4">
-            <input type="text" v-model="name" class="form-control" >
+        <div class="col-lg-2 col-3">
+            <input type="text" v-model="name" class="form-control" placeholder="名前">
         </div>
         <br>
         <label class="col-4 col-form-label"> 部屋番号: </label>
-        <div class="col-md-2 col-3">
-            <input type="number" v-model="number" class="form-control">
+        <div class="col-lg-2 col-4">
+            <input type="number" v-model="number" class="form-control" placeholder="部屋番号">
         </div>
         <br>
         <label class="col-4 col-form-label">部屋内番号: </label>
         <div class="col-md-3 col-6">
             <select v-model="roomCheck" class="form-select form-select-sm">
                 <option value="" selected="selected">選択してください</option>
-                <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -25,7 +24,7 @@
         </div>
         <br>
         <label class="col-4 col-form-label"> 要介護度: </label>
-        <div class="col-md-3 col-6">
+        <div class="col-lg-3 col-6">
             <select v-model="careLevel" class="form-select form-select-sm">
                 <option value="" selected="selected">選択してください</option>
                 <option value="自立">自立</option>
@@ -40,7 +39,7 @@
         </div>
         <br>
         <label class="col-4 col-form-label"> 生年月日: </label>
-        <div class="col-md-3 col-6" >
+        <div class="col-lg-3 col-6" >
             <input type="date" v-model="birthday" class="form-control">
         </div>
         <br>
@@ -59,7 +58,7 @@ export default {
              birthday: this.birthday,
              careLevel: this.careLevel,
              number: this.number + this.roomCheck,
-             floor: parseInt(String(Number(this.number) / 100))
+             floor: parseInt(String(Number(this.number) / 100)) + 'F'
              });
             alert('新規登録しました');
         }

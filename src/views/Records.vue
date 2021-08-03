@@ -1,34 +1,34 @@
 <template>
     <div @mousemove.once="getRecord">
        
-        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
-        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
-        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
+        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary m-1">利用者情報更新</router-link>
+        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary m-1">マニュアル</router-link>
+        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary m-1">既往歴</router-link>
         <hr>
-        <h4>記録</h4>
+        <h3>記録</h3>
         <div class="m-0">
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-8">
+            <div class="col-8 col-lg-3">
                 <input type="datetime-local" v-model="day" class="form-control">
             </div>
             <br>
             <label class="col-3 col-form-label">記録: </label>
-            <div class="col-12">
+            <div class="col-10 col-lg-6">
                 <textarea v-model="record" class="form-control"></textarea>
             </div>
-            <button @click="templateRecord" class="btn btn-primary m-1">特変なし</button>
-            <button @click="addRecords(_uid)" class="btn btn-primary">追加</button>
+            <button @click="templateRecord" class="btn btn-primary mx-1 mt-2">特変なし</button>
+            <button @click="addRecords(_uid)" class="btn btn-primary mx-1 mt-2">追加</button>
         </div>
         <hr>
         <div>
             <h4>更新用フォーム</h4>
             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-8">
+            <div class="col-8 col-lg-3">
                 <input type="datetime-local"  v-model="newDay" class="form-control">
             </div>
             <br>
             <label class="col-3 col-form-label">記録: </label>
-            <div class="col-12">
+            <div class="col-10 col-lg-6">
                 <textarea v-model="newRecord" class="form-control"></textarea>
             </div>
          </div>
@@ -45,8 +45,8 @@
             <p>登録者: {{rec.value.staffName}}</p>
 
             <button @click="updateRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0">更新</button>
-            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0 mx-1">削除</button>
-            <button @click="addArchives(rec.value.record)" class="col-7 btn btn-primary px-0">
+            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0 mx-2">削除</button>
+            <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
             『記録まとめ』へ上書き
             </button>
             <hr>
@@ -70,8 +70,11 @@
                     return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
                 });
             },
+            reverseSortRecords() {
+                return this.sortRecords.slice().reverse();
+            },
             serchRecords() {
-                return this.sortRecords.filter(rec => {
+                return this.reverseSortRecords.filter(rec => {
                     return rec.value.record.includes(this.keyword);
                 });
             },
@@ -84,7 +87,7 @@
             },
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }
-                this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
+                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
                 day: this.day,
                 record: this.record,
                 recordID: uid,
@@ -104,12 +107,12 @@
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
             },
             deleteRecord(recID) {
-                 this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete();
+                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete();
                  alert('削除しました')
                  this.getRecord() 
             },
             getRecord() {
-              this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
@@ -121,7 +124,7 @@
             },
            updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
-               this.db.collection('users').doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
+               this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 record: this.newRecord,
                 staffName: this.displayStaffName
@@ -132,7 +135,7 @@
                this.newRecord = ''
             },
              addArchives(record) {
-               this.db.collection('users').doc('users-record').collection('archives').doc(this.id).set({
+               this.usersRef.doc('users-record').collection('archives').doc(this.id).set({
                 userName: this.userName,
                 userNumber: this.id,
                 archive: record

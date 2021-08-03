@@ -11,7 +11,9 @@ import firebase from 'firebase';
                 birthday: '',
                 roomCheck: '',
                 users: {},
-                day: '',
+                day: new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
                 record: '',
                 records: {},
                 newDay: '',
@@ -74,6 +76,7 @@ import firebase from 'firebase';
                 return this.$store.getters.idToken;
             },
             
+            
         },
         methods: {
             objectUsers() {
@@ -97,7 +100,7 @@ import firebase from 'firebase';
             },
 
             staffNameSeek(staffID) {
-                this.db.collection('users').doc('staffs').collection(staffID).onSnapshot(querySnapshot => {
+                this.usersRef.doc('staffs').collection(staffID).onSnapshot(querySnapshot => {
                     const obj = {}
                     querySnapshot.forEach(doc => {
                     //querySnapshotが現在の全体のデータ
@@ -106,6 +109,7 @@ import firebase from 'firebase';
                     this.staffs = obj;
                     this.displayStaffName = this.staffs[staffID].staffName;
                 });
-            }
+            },
+            
         }
     };

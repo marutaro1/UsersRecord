@@ -3,7 +3,6 @@
         <div v-for="(user,key) in userProfile" :key="key">
            <h2 class="mt-2">利用者プロフィール</h2>
                 <div class="text-right mb-2">
-                    {{user[0]}}
                     名前: {{user[1].name}} 様 &nbsp;
                     <br>
                     介護度: {{user[1].careLevel}} &nbsp;
