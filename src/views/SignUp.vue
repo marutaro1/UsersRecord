@@ -3,21 +3,21 @@
         <h2 class="mt-2">職員登録画面</h2>
         <div>
             <label class="col-4 col-form-label">新規職員名:</label>
-            <div class="col-8 col-lg-2">
+            <div class="col-4 col-lg-2">
             <input type="text" v-model="staffName" class="form-control" placeholder="職員名">
             </div>
 
             <br>
             
             <label class="col-4 col-form-label">Eメール:</label>
-            <div class="col-8 col-lg-3">
+            <div class="col-7 col-lg-3">
             <input type="text" v-model="email" class="form-control" placeholder="Eメール">
             </div>
     
             <br>
             
             <label class="col-4 col-form-label">パスワード:</label>
-            <div class="col-8 col-lg-3">
+            <div class="col-7 col-lg-3">
             <input type="text" v-model="password" class="form-control" placeholder="パスワード">
             </div>
 

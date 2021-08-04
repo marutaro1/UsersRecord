@@ -3,7 +3,7 @@
 
         <h2>新規利用者登録</h2>
         <label class="col-4 col-form-label"> 名前: </label>
-        <div class="col-lg-2 col-3">
+        <div class="col-lg-2 col-4">
             <input type="text" v-model="name" class="form-control" placeholder="名前">
         </div>
         <br>

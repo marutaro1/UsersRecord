@@ -1,9 +1,9 @@
 <template>
     <div @mousemove.once="getRecord">
        
-        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary m-1">利用者情報更新</router-link>
-        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary m-1">マニュアル</router-link>
-        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary m-1">既往歴</router-link>
+        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
+        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
+        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
         <hr>
         <h3>記録</h3>
         <div class="m-0">
@@ -16,7 +16,7 @@
             <div class="col-10 col-lg-6">
                 <textarea v-model="record" class="form-control"></textarea>
             </div>
-            <button @click="templateRecord" class="btn btn-primary mx-1 mt-2">特変なし</button>
+            <button @click="templateRecord" class="btn btn-primary mt-2">特変なし</button>
             <button @click="addRecords(_uid)" class="btn btn-primary mx-1 mt-2">追加</button>
         </div>
         <hr>
@@ -44,8 +44,8 @@
             <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
             <p>登録者: {{rec.value.staffName}}</p>
 
-            <button @click="updateRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0">更新</button>
-            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 btn btn-primary px-0 mx-2">削除</button>
+            <button @click="updateRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0">更新</button>
+            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0 mx-1">削除</button>
             <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
             『記録まとめ』へ上書き
             </button>

@@ -10,9 +10,9 @@
       <div v-for="(rec,key) in archivesPost" :key="key">
         <p>部屋番号: {{parseInt(rec.userNumber / 10)}}</p>
         <p>名前: {{rec.userName}}様</p>
-        <p>記録: {{rec.archive}}</p>
+        <p style="white-space:pre-wrap; word-wrap:break-word;">記録: {{rec.archive}}</p>
         <button @click="updateArchive(rec.userNumber)" class="btn btn-primary mt-1">更新</button>
-        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-2">まとめから削除</button>
+        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-1">まとめから削除</button>
         <hr>
       </div>
     </div>
