@@ -26,8 +26,8 @@
             <div v-for="(m,key) in serchManuel" :key="key">
             <p style="white-space:pre-wrap; word-wrap:break-word;">{{m.value.manuel}}</p>
     
-            <button @click="updateManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2">更新</button>
-            <button @click="deleteManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2 mx-1">削除</button>
+            <button @click="updateManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2 col-lg-1">更新</button>
+            <button @click="deleteManuel(m.value.manuelID)" class="btn btn-primary px-0 col-2 col-lg-1 mx-1">削除</button>
             <hr>
             </div>
         </div>

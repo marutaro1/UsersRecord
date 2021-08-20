@@ -34,8 +34,8 @@
             <div v-for="(h,key) in serchHistory" :key="key">
                 <p>発症日: {{h.value.dateOfOnset}}</p>
                 <p>病名: {{h.value.history}}</p>
-                <button @click="updateHistory(h.value.historyID)" class="btn btn-primary px-0 col-2">更新</button>
-                <button @click="deleteHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 mx-1">削除</button>
+                <button @click="updateHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 col-lg-1">更新</button>
+                <button @click="deleteHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 col-lg-1 mx-1">削除</button>
                 <hr>
             </div>
         </div>

@@ -37,8 +37,7 @@
                     obj[doc.id] = doc.data()
                 })
                 this.archivesPost = obj
-                console.log(this.archivesPost)
-              })
+              });
       },
       updateArchive(No) {
         if(this.newArchive === ''){ return }

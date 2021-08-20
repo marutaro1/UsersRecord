@@ -102,7 +102,9 @@
                       this.getRecord()
                     }
                 );
-                this.day = '',
+                this.day = new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
                 this.record = ''
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
             },
@@ -119,8 +121,7 @@
                     obj[doc.id] = doc.data()
                 })
                 this.records = obj
-              })
-              console.log(this.displayStaffName);
+              });
             },
            updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }

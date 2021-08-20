@@ -75,7 +75,11 @@ import firebase from 'firebase';
             idToken() {
                 return this.$store.getters.idToken;
             },
-            
+            todayTime() {
+                return new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00';
+            }
             
         },
         methods: {
