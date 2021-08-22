@@ -18,6 +18,8 @@
             </div>
             <button @click="templateRecord" class="btn btn-primary mt-2">特変なし</button>
             <button @click="addRecords(_uid)" class="btn btn-primary mx-1 mt-2">追加</button>
+            <button @click="testRecords" class="btn btn-primary mx-1 mt-2">testRecords</button>
+
         </div>
         <hr>
         <div>
@@ -95,10 +97,8 @@
                 }).then(
                     res => {
                     console.log(res);
-                    if(res === res) {    
                              
-                             alert('追加しました。')
-                         }
+                      //alert('追加しました。')
                       this.getRecord()
                     }
                 );
@@ -123,7 +123,7 @@
                 this.records = obj
               });
             },
-           updateRecord(recID) {
+            updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
@@ -135,22 +135,40 @@
                this.newDay = ''
                this.newRecord = ''
             },
-             addArchives(record) {
+            addArchives(record) {
                this.usersRef.doc('users-record').collection('archives').doc(this.id).set({
                 userName: this.userName,
                 userNumber: this.id,
                 archive: record
                 });
                 alert('追加しました');
-             },
-             templateRecord() {
+            },
+            templateRecord() {
                  const date1 = new Date();
                  const date2 = date1.getFullYear()  + '-' +
 				("00" + (date1.getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (date1.getDate())).slice(-2)  + 'T' + '17' + ':' + '00';
                 this.day = date2;
                 this.record = '特変なし。';
-             }
+            },
+
+            testRecordValue(testValue) {
+                 const date1 = new Date();
+                 const date2 = date1.getFullYear()  + '-' +
+				("00" + (date1.getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (date1.getDate())).slice(-2)  + 'T' + '17' + ':' + '00';
+                this.day = date2;
+                this.record = String(testValue);
+            },
+            
+            //テスト用レコードデータ登録メソッド
+            testRecords() {
+                for (var i = 0; i < 1000; i++) {
+                    this.testRecordValue(i);
+                    this.addRecords(i);
+                    console.log(i);
+                }
+            }
         }
 
     };

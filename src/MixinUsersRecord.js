@@ -46,7 +46,7 @@ import firebase from 'firebase';
             });
 
           
-            this._uid = Math.floor( Math.random(this._uid) * 100 );
+            this._uid = Math.floor( Math.random(this._uid) * 100);
         },
         mounted() {
             firebase.auth().onAuthStateChanged(staff => {
@@ -61,6 +61,9 @@ import firebase from 'firebase';
             });
         },
         computed: {
+            randamID() {
+
+            },
             userProfile() {
                 this.objectUsers()
                 return this.users

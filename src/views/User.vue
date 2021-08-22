@@ -22,6 +22,5 @@
     export default {
         props: ['id'],
         mixins: [MixinUsersRecord],
-       
     };
 </script>
