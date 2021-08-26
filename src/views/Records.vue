@@ -39,19 +39,45 @@
          <div class="col-6 mb-2">
             <input type="text" v-model="keyword" class="form-control">
          </div>
-         <div class="scroll">
-            <div v-for="(rec, key) in serchRecords" :key="key">
-    
-            <p>{{rec.value.day}}</p>
-            <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
-            <p>登録者: {{rec.value.staffName}}</p>
 
-            <button @click="updateRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0">更新</button>
-            <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0 mx-1">削除</button>
-            <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
-            『記録まとめ』へ上書き
-            </button>
-            <hr>
+         <label class="col-3 col-form-label">日付検索:</label>
+
+         <div class="col-6 mb-2">
+            <input type="date" v-model="dayKeywordFirst" class="form-control">
+            <p class="m-0 p-0">から</p>
+            <input type="date" v-model="dayKeywordSecond" class="form-control">
+         </div>
+        <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
+        <hr>
+        
+         <div class="scroll">
+            <div v-if="!!dayKeywordFirst && !!dayKeywordSecond">
+               <div v-for="(rec, key) in serchDay" :key="key"> 
+                <p>{{rec.value.day}}</p>
+                <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
+                <p>登録者: {{rec.value.staffName}}</p>
+
+                <button @click="updateRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0">更新</button>
+                <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0 mx-1">削除</button>
+                <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
+                『記録まとめ』へ上書き
+                </button>
+               </div>
+                
+            </div>
+            <div v-else-if="!keyword || !!keyword">
+                <div v-for="(rec, key) in serchRecords" :key="key">
+                <p>{{rec.value.day}}</p>
+                <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
+                <p>登録者: {{rec.value.staffName}}</p>
+
+                <button @click="updateRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0">更新</button>
+                <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0 mx-1">削除</button>
+                <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
+                『記録まとめ』へ上書き
+                </button>
+                </div>
+                <hr>
             </div>
          </div>
     </div>
@@ -75,11 +101,21 @@
             reverseSortRecords() {
                 return this.sortRecords.slice().reverse();
             },
-            serchRecords() {
+            //日付取得
+            serchDay() {
                 return this.reverseSortRecords.filter(rec => {
-                    return rec.value.record.includes(this.keyword);
+                            this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
+                            const customIncludes = (arr, target) => arr.some(el => target.includes(el));
+                            //独自関数
+                            return customIncludes(this.arrayDayData, rec.value.day);
                 });
             },
+            serchRecords() {
+                return this.reverseSortRecords.filter(rec => {
+                        return rec.value.record.includes(this.keyword);
+                });
+            },
+           
         },
         methods: {
             recordsList() {
@@ -168,7 +204,35 @@
                     this.addRecords(i);
                     console.log(i);
                 }
-            }
+            },
+           //day取得メソッド
+           getDay(start, end) {
+                                var dayData = []
+                                //startDayからendDayまでの日付を入れる配列
+                                const startDate = new Date(start)
+                                const endDate = new Date(end)
+                                while (startDate < endDate) {
+                                    dayData = [...dayData, startDate.getFullYear()  + 
+                    '-' +("00" + (startDate.getMonth() + 1)).slice(-2)+ '-' + 
+                    ("00" + (startDate.getDate())).slice(-2)]
+                                    startDate.setDate(startDate.getDate() + 1)
+                                    //startDayをdayData配列の中に入れ、+1日してwhileでendDayまでのループを回す
+
+                                }    
+                                dayData = [...dayData, endDate.getFullYear()  + 
+                    '-' +("00" + (endDate.getMonth() + 1)).slice(-2)+ '-' + 
+                    ("00" + (endDate.getDate())).slice(-2)]
+
+                                this.arrayDayData = dayData;       
+                                //dayData配列内にstartDayからendDayまでのデータが格納され、それをarrayDayDate(空の配列)内に入れ直す
+           },
+           //day空文字に変える
+           dayclearString() {
+               this.dayKeywordFirst = ''
+               this.dayKeywordSecond = ''
+
+           }
+
         }
 
     };

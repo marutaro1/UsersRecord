@@ -14,6 +14,7 @@ import firebase from 'firebase';
                 day: new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
+                arrayDayData: [],
                 record: '',
                 records: {},
                 newDay: '',
@@ -28,6 +29,8 @@ import firebase from 'firebase';
                 manuel: '',
                 history: '',
                 keyword: '',
+                dayKeywordFirst: '',
+                dayKeywordSecond: '',
                 email: '',
                 password: ''
             }
