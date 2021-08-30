@@ -37,7 +37,12 @@
          <hr>
          <label class="col-3 col-form-label">キーワード検索:</label>
          <div class="col-6 mb-2">
-            <input type="text" v-model="keyword" class="form-control">
+            <vue-simple-suggest
+            v-model="keyword"
+            :list="recordsKeyword"
+            :filter-by-query="true"
+            class="form-control m-0 p-0">
+            </vue-simple-suggest>
          </div>
 
          <label class="col-3 col-form-label">日付指定:</label>
@@ -89,6 +94,8 @@
 <script>
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     import VuejsPaginate from 'vuejs-paginate';
+    import VueSimpleSuggest from 'vue-simple-suggest';
+    import 'vue-simple-suggest/dist/styles.css'
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
@@ -99,7 +106,8 @@
             }
         },
        components: {
-           "vuejs-paginate": VuejsPaginate,
+           'vuejs-paginate': VuejsPaginate,
+           'vue-simple-suggest': VueSimpleSuggest,
        },
         computed: {
             recordsLists() {
@@ -114,6 +122,17 @@
             //日付逆転追加
             reverseSortRecords() {
                 return this.sortRecords.slice().reverse();
+            },
+            //reverseSortRecordsからキーワード候補抽出
+            recordsKeyword() {
+                var keywordData = []
+                var recordNumber = this.reverseSortRecords.length
+                var i = 0
+                while (i < recordNumber) {
+                    keywordData = [...keywordData, this.reverseSortRecords[i].value.record]
+                    i++
+                }
+                return keywordData;
             },
             //日付指定追加
             serchDay() {
@@ -237,8 +256,8 @@
            getDay(start, end) {
                                 var dayData = []
                                 //startDayからendDayまでの日付を入れる配列
-                                const startDate = new Date(start)
-                                const endDate = new Date(end)
+                                var startDate = new Date(start)
+                                var endDate = new Date(end)
                                 while (startDate < endDate) {
                                     dayData = [...dayData, startDate.getFullYear()  + 
                     '-' +("00" + (startDate.getMonth() + 1)).slice(-2)+ '-' + 
@@ -263,7 +282,8 @@
            //ページをクリックした際の数字変化メソッド
            clickCallback(num) {
                this.currentPage = Number(num);
-           }
+           },
+           
 
         }
 
