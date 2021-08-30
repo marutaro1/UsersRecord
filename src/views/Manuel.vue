@@ -36,11 +36,27 @@
             <hr>
             </div>
         </div>
+        <vuejs-paginate
+            :page-count="pageCount"
+            :prev-text="'<'"
+            :next-text="'>'"
+            :click-handler="clickCallback"
+            :container-class="'pagination justify-content-center'"
+            :page-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-class="'page-item'"
+            :prev-link-class="'page-link'"
+            :next-class="'page-item'"
+            :next-link-class="'page-link'"
+            :first-last-button="true"
+            :first-button-text="'<<'"
+            :last-button-text="'>>'">
+       </vuejs-paginate>
     </div>
 </template>
 <script>
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
-
+import VuejsPaginate from 'vuejs-paginate';
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'
 export default {
@@ -53,31 +69,41 @@ export default {
      };
     },
     components: {
-       
-        'vue-simple-suggest': VueSimpleSuggest,
+       'vuejs-paginate': VuejsPaginate,   
+       'vue-simple-suggest': VueSimpleSuggest,
     },
     computed: {
         manuelLists() {
             this.manuelList();
             return this.manuelPost;
         },
-       //manuelListsからキーワード候補抽出
-            manuelKeyword() {
-                var keywordData = []
-                var manuelNumber = this.manuelLists.length
-                var i = 0
-                while (i < manuelNumber) {
-                    keywordData = [...keywordData, this.manuelLists[i].value.manuel]
-                    i++
-                }
-                return keywordData;
-            },
+        //manuelListsからキーワード候補抽出
+        manuelKeyword() {
+            var keywordData = []
+            var manuelNumber = this.manuelLists.length
+            var i = 0
+            while (i < manuelNumber) {
+                keywordData = [...keywordData, this.manuelLists[i].value.manuel]
+                i++
+            }
+            return keywordData;
+    },
             
         serchManuel() {
-                return this.manuelLists.filter(m => {
-                    return m.value.manuel.includes(this.keyword);
-                });
-        }
+            return this.manuelLists.filter(m => {
+                return m.value.manuel.includes(this.keyword);
+            });
+        },
+         //ページカウント
+        pageCount() {
+            return Math.ceil(this.serchManuel.length / this.parPage)
+        },
+        //ページ機能追加
+        getHistoryPageData() {
+            var current = this.currentPage * this.parPage;
+            var start = current - this.parPage  
+            return this.serchManuel.slice(start, current)
+        }               
     },
     methods: {
          manuelList() {
@@ -113,9 +139,13 @@ export default {
             this.newManuel = ''
         },
         deleteManuel(manuelID) {
-                 this.usersRef.doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).delete();
-                 alert('削除しました')
-        }
+            this.usersRef.doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).delete();
+            alert('削除しました')
+        },
+         //ページをクリックした際の数字変化メソッド
+        clickCallback(num) {
+            this.currentPage = Number(num);
+        },
     }
 };
 </script>

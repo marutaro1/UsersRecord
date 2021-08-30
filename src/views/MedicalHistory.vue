@@ -45,18 +45,36 @@
         <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
 
         <div class="col-12 scroll">
-            <div v-for="(h,key) in serchHistory" :key="key">
+       
+            <div v-for="(h,key) in getHistoryPageData" :key="key">
                 <p>発症日: {{h.value.dateOfOnset}}</p>
                 <p>病名: {{h.value.history}}</p>
                 <button @click="updateHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 col-lg-1">更新</button>
                 <button @click="deleteHistory(h.value.historyID)" class="btn btn-primary px-0 col-2 col-lg-1 mx-1">削除</button>
                 <hr>
             </div>
-        </div>
+       </div>
+       <vuejs-paginate
+            :page-count="pageCount"
+            :prev-text="'<'"
+            :next-text="'>'"
+            :click-handler="clickCallback"
+            :container-class="'pagination justify-content-center'"
+            :page-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-class="'page-item'"
+            :prev-link-class="'page-link'"
+            :next-class="'page-item'"
+            :next-link-class="'page-link'"
+            :first-last-button="true"
+            :first-button-text="'<<'"
+            :last-button-text="'>>'">
+       </vuejs-paginate>
     </div>
 </template>
 <script>
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
+import VuejsPaginate from 'vuejs-paginate';
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'
 export default {
@@ -72,6 +90,7 @@ export default {
      };
     },
      components: {
+        'vuejs-paginate': VuejsPaginate,
         'vue-simple-suggest': VueSimpleSuggest,
        },
     computed: {
@@ -84,9 +103,21 @@ export default {
                     return Number(new Date(a.value.dateOfOnset)) - Number(new Date(b.value.dateOfOnset));
                 });
             },
+             reverseSortHistory() {
+                return this.sortHistory.slice().reverse();
+            },
             serchHistory() {
-                return this.sortHistory.filter(rec => {
+                return this.reverseSortHistory.filter(rec => {
                     return rec.value.history.includes(this.keyword);
+                });
+            },
+             //日付指定追加
+            serchDay() {
+                return this.reverseSortHistory.filter(rec => {
+                            this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
+                            var customIncludes = (arr, target) => arr.some(el => target.includes(el));
+                            //独自関数
+                            return customIncludes(this.arrayDayData, rec.value.dateOfOnset);
                 });
             },
             //serchHistoryからキーワード候補抽出
@@ -100,7 +131,24 @@ export default {
                 }
                 return keywordData;
             },    
-            
+             //ページカウント
+            pageCount() {
+                 if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+                   return Math.ceil(this.serchDay.length / this.parPage)
+                 } else {
+                   return Math.ceil(this.serchHistory.length / this.parPage)
+                 }
+           },
+           //ページ機能追加
+           getHistoryPageData() {
+               var current = this.currentPage * this.parPage;
+               var start = current - this.parPage
+               if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+                   return this.serchDay.slice(start, current)
+               } else {
+                   return this.serchHistory.slice(start, current)
+               }               
+           },
         },
     methods: {
         historyList() {
