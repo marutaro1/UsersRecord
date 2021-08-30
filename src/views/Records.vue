@@ -40,7 +40,7 @@
             <input type="text" v-model="keyword" class="form-control">
          </div>
 
-         <label class="col-3 col-form-label">日付検索:</label>
+         <label class="col-3 col-form-label">日付指定:</label>
 
          <div class="col-6 mb-2">
             <input type="date" v-model="dayKeywordFirst" class="form-control">
@@ -49,10 +49,11 @@
          </div>
         <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
         <hr>
-        
+
          <div class="scroll">
-            <div v-if="!!dayKeywordFirst && !!dayKeywordSecond">
-               <div v-for="(rec, key) in serchDay" :key="key"> 
+    
+
+                <div v-for="(rec, key) in getPageData" :key="key">
                 <p>{{rec.value.day}}</p>
                 <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
                 <p>登録者: {{rec.value.staffName}}</p>
@@ -62,32 +63,44 @@
                 <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
                 『記録まとめ』へ上書き
                 </button>
-               </div>
-                
-            </div>
-            <div v-else-if="!keyword || !!keyword">
-                <div v-for="(rec, key) in serchRecords" :key="key">
-                <p>{{rec.value.day}}</p>
-                <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
-                <p>登録者: {{rec.value.staffName}}</p>
-
-                <button @click="updateRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0">更新</button>
-                <button @click="deleteRecord(String(rec.value.recordID))" class="col-2 col-lg-1 btn btn-primary px-0 mx-1">削除</button>
-                <button @click="addArchives(rec.value.record)" class="col-7 col-lg-3 btn btn-primary px-0">
-                『記録まとめ』へ上書き
-                </button>
-                </div>
+            
                 <hr>
             </div>
          </div>
+            <vuejs-paginate
+                :page-count="pageCount"
+                :prev-text="'<'"
+                :next-text="'>'"
+                :click-handler="clickCallback"
+                :container-class="'pagination justify-content-center'"
+                :page-class="'page-item'"
+                :page-link-class="'page-link'"
+                :prev-class="'page-item'"
+                :prev-link-class="'page-link'"
+                :next-class="'page-item'"
+                :next-link-class="'page-link'"
+                :first-last-button="true"
+                :first-button-text="'<<'"
+                :last-button-text="'>>'"
+            >
+            </vuejs-paginate>
     </div>
 </template>
 <script>
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
+    import VuejsPaginate from 'vuejs-paginate';
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
-       
+        data() {
+            return {
+                parPage: 10,
+                currentPage: 1,
+            }
+        },
+       components: {
+           "vuejs-paginate": VuejsPaginate,
+       },
         computed: {
             recordsLists() {
                 this.recordsList();
@@ -98,10 +111,11 @@
                     return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
                 });
             },
+            //日付逆転追加
             reverseSortRecords() {
                 return this.sortRecords.slice().reverse();
             },
-            //日付取得
+            //日付指定追加
             serchDay() {
                 return this.reverseSortRecords.filter(rec => {
                             this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
@@ -110,12 +124,26 @@
                             return customIncludes(this.arrayDayData, rec.value.day);
                 });
             },
+            //キーワード検索追加
             serchRecords() {
                 return this.reverseSortRecords.filter(rec => {
                         return rec.value.record.includes(this.keyword);
                 });
             },
-           
+            //ページカウント
+            pageCount() {
+               return Math.ceil(this.serchRecords.length / this.parPage)
+           },
+           //ページ機能追加
+           getPageData() {
+               var current = this.currentPage * this.parPage;
+               var start = current - this.parPage;
+               if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+                   return this.serchDay.slice(start, current);
+               } else {
+                   return this.serchRecords.slice(start, current);
+               }               
+           },
         },
         methods: {
             recordsList() {
@@ -231,6 +259,10 @@
                this.dayKeywordFirst = ''
                this.dayKeywordSecond = ''
 
+           },
+           //ページをクリックした際の数字変化メソッド
+           clickCallback(num) {
+               this.currentPage = Number(num);
            }
 
         }
