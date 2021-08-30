@@ -27,9 +27,23 @@
         </div>
         <hr>
         <label class="col-3 col-form-label">病名検索:</label>
+          <div class="col-6 mb-2">
+            <vue-simple-suggest
+                v-model="keyword"
+                :list="historyKeyword"
+                :filter-by-query="true"
+                class="form-control m-0 p-0">
+            </vue-simple-suggest>
+         </div>    
+         <label class="col-3 col-form-label">日付指定:</label>
+
          <div class="col-6 mb-2">
-            <input type="text" v-model="keyword" class="form-control">
-         </div>      
+            <input type="date" v-model="dayKeywordFirst" class="form-control">
+            <p class="m-0 p-0">から</p>
+            <input type="date" v-model="dayKeywordSecond" class="form-control">
+         </div>
+        <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
+
         <div class="col-12 scroll">
             <div v-for="(h,key) in serchHistory" :key="key">
                 <p>発症日: {{h.value.dateOfOnset}}</p>
@@ -43,6 +57,8 @@
 </template>
 <script>
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
+import VueSimpleSuggest from 'vue-simple-suggest';
+import 'vue-simple-suggest/dist/styles.css'
 export default {
     props: ['id'],
     mixins: [MixinUsersRecord],
@@ -55,6 +71,9 @@ export default {
        historyID: ''
      };
     },
+     components: {
+        'vue-simple-suggest': VueSimpleSuggest,
+       },
     computed: {
             historyLists() {
                 this.historyList();
@@ -70,6 +89,18 @@ export default {
                     return rec.value.history.includes(this.keyword);
                 });
             },
+            //serchHistoryからキーワード候補抽出
+            historyKeyword() {
+                var keywordData = []
+                var recordNumber = this.serchHistory.length
+                var i = 0
+                while (i < recordNumber) {
+                    keywordData = [...keywordData, this.serchHistory[i].value.history]
+                    i++
+                }
+                return keywordData;
+            },    
+            
         },
     methods: {
         historyList() {
@@ -111,7 +142,39 @@ export default {
         deleteHistory(historyID) {
                  this.usersRef.doc('history').collection(this.userProfile[0][0]).doc(String(historyID)).delete();
                  alert('削除しました')
-        }
+        },
+        //day取得メソッド
+           getDay(start, end) {
+                                var dayData = []
+                                //startDayからendDayまでの日付を入れる配列
+                                var startDate = new Date(start)
+                                var endDate = new Date(end)
+                                while (startDate < endDate) {
+                                    dayData = [...dayData, startDate.getFullYear()  + 
+                    '-' +("00" + (startDate.getMonth() + 1)).slice(-2)+ '-' + 
+                    ("00" + (startDate.getDate())).slice(-2)]
+                                    startDate.setDate(startDate.getDate() + 1)
+                                    //startDayをdayData配列の中に入れ、+1日してwhileでendDayまでのループを回す
+
+                                }    
+                                dayData = [...dayData, endDate.getFullYear()  + 
+                    '-' +("00" + (endDate.getMonth() + 1)).slice(-2)+ '-' + 
+                    ("00" + (endDate.getDate())).slice(-2)]
+
+                                this.arrayDayData = dayData;       
+                                //dayData配列内にstartDayからendDayまでのデータが格納され、それをarrayDayDate(空の配列)内に入れ直す
+           },
+           //day空文字に変える
+           dayclearString() {
+               this.dayKeywordFirst = ''
+               this.dayKeywordSecond = ''
+
+           },
+           //ページをクリックした際の数字変化メソッド
+           clickCallback(num) {
+               this.currentPage = Number(num);
+           },
+       
     }
 };
 </script>

@@ -21,6 +21,8 @@ import firebase from 'firebase';
                 newRecord: '',
                 recordID: this._uid,
                 dayRecords: {},
+                parPage: 10,
+                currentPage: 1,
                 staffs: {},
                 staffName: '',
                 displayStaffName: '',
@@ -64,9 +66,6 @@ import firebase from 'firebase';
             });
         },
         computed: {
-            randamID() {
-
-            },
             userProfile() {
                 this.objectUsers()
                 return this.users
@@ -85,8 +84,7 @@ import firebase from 'firebase';
                 return new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00';
-            }
-            
+            },
         },
         methods: {
             objectUsers() {
@@ -120,6 +118,33 @@ import firebase from 'firebase';
                     this.displayStaffName = this.staffs[staffID].staffName;
                 });
             },
-            
+              //day取得メソッド
+           getDay(start, end) {
+            var dayData = []
+            //startDayからendDayまでの日付を入れる配列
+            var startDate = new Date(start)
+            var endDate = new Date(end)
+            while (startDate < endDate) {
+                dayData = [...dayData, 
+                    startDate.getFullYear()  +  '-' +("00" + (startDate.getMonth() + 1)).slice(-2)+ '-' + ("00" + (startDate.getDate())).slice(-2)]
+                    startDate.setDate(startDate.getDate() + 1)
+                //startDayをdayData配列の中に入れ、+1日してwhileでendDayまでのループを回す
+
+            }    
+            dayData = [...dayData, endDate.getFullYear() + '-' +("00" + (endDate.getMonth() + 1)).slice(-2)+ '-' + ("00" + (endDate.getDate())).slice(-2)]
+            this.arrayDayData = dayData;       
+            //dayData配列内にstartDayからendDayまでのデータが格納され、それをarrayDayDate(空の配列)内に入れ直す
+            },
+            //day空文字に変える
+            dayclearString() {
+            this.dayKeywordFirst = ''
+            this.dayKeywordSecond = ''
+
+            },
+            //ページをクリックした際の数字変化メソッド
+            clickCallback(num) {
+            this.currentPage = Number(num);
+            },
+                        
         }
     };

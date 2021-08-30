@@ -41,7 +41,8 @@
             v-model="keyword"
             :list="recordsKeyword"
             :filter-by-query="true"
-            class="form-control m-0 p-0">
+            class="form-control m-0 p-0"
+            autocomplete="off">
             </vue-simple-suggest>
          </div>
 
@@ -99,12 +100,6 @@
     export default {
         props: ['id', 'userName'],
         mixins: [MixinUsersRecord],
-        data() {
-            return {
-                parPage: 10,
-                currentPage: 1,
-            }
-        },
        components: {
            'vuejs-paginate': VuejsPaginate,
            'vue-simple-suggest': VueSimpleSuggest,
@@ -123,13 +118,13 @@
             reverseSortRecords() {
                 return this.sortRecords.slice().reverse();
             },
-            //reverseSortRecordsからキーワード候補抽出
+            //serchRecordsからキーワード候補抽出
             recordsKeyword() {
                 var keywordData = []
-                var recordNumber = this.reverseSortRecords.length
+                var recordNumber = this.serchRecords.length
                 var i = 0
                 while (i < recordNumber) {
-                    keywordData = [...keywordData, this.reverseSortRecords[i].value.record]
+                    keywordData = [...keywordData, this.serchRecords[i].value.record]
                     i++
                 }
                 return keywordData;
@@ -138,7 +133,7 @@
             serchDay() {
                 return this.reverseSortRecords.filter(rec => {
                             this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
-                            const customIncludes = (arr, target) => arr.some(el => target.includes(el));
+                            var customIncludes = (arr, target) => arr.some(el => target.includes(el));
                             //独自関数
                             return customIncludes(this.arrayDayData, rec.value.day);
                 });
@@ -151,16 +146,20 @@
             },
             //ページカウント
             pageCount() {
-               return Math.ceil(this.serchRecords.length / this.parPage)
+                 if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+                   return Math.ceil(this.serchDay.length / this.parPage)
+                 } else {
+                   return Math.ceil(this.serchRecords.length / this.parPage)
+                 }
            },
            //ページ機能追加
            getPageData() {
                var current = this.currentPage * this.parPage;
-               var start = current - this.parPage;
+               var start = current - this.parPage
                if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
-                   return this.serchDay.slice(start, current);
+                   return this.serchDay.slice(start, current)
                } else {
-                   return this.serchRecords.slice(start, current);
+                   return this.serchRecords.slice(start, current)
                }               
            },
         },

@@ -19,9 +19,14 @@
         </div>
         <hr>
          <label class="col-3 col-form-label">キーワード検索:</label>
-         <div class="col-6 mb-2">
-            <input type="text" v-model="keyword" class="form-control">
-         </div>          
+          <div class="col-6 mb-2">
+            <vue-simple-suggest
+            v-model="keyword"
+            :list="manuelKeyword"
+            :filter-by-query="true"
+            class="form-control m-0 p-0">
+            </vue-simple-suggest>
+         </div>       
         <div class="col-12 scroll">
             <div v-for="(m,key) in serchManuel" :key="key">
             <p style="white-space:pre-wrap; word-wrap:break-word;">{{m.value.manuel}}</p>
@@ -35,6 +40,9 @@
 </template>
 <script>
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
+
+import VueSimpleSuggest from 'vue-simple-suggest';
+import 'vue-simple-suggest/dist/styles.css'
 export default {
     props: ['id'],
     mixins: [MixinUsersRecord],
@@ -44,11 +52,27 @@ export default {
        manuelPost: {}
      };
     },
+    components: {
+       
+        'vue-simple-suggest': VueSimpleSuggest,
+    },
     computed: {
         manuelLists() {
             this.manuelList();
             return this.manuelPost;
         },
+       //manuelListsからキーワード候補抽出
+            manuelKeyword() {
+                var keywordData = []
+                var manuelNumber = this.manuelLists.length
+                var i = 0
+                while (i < manuelNumber) {
+                    keywordData = [...keywordData, this.manuelLists[i].value.manuel]
+                    i++
+                }
+                return keywordData;
+            },
+            
         serchManuel() {
                 return this.manuelLists.filter(m => {
                     return m.value.manuel.includes(this.keyword);
