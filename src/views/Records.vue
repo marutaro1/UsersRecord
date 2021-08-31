@@ -105,19 +105,7 @@
            'vue-simple-suggest': VueSimpleSuggest,
        },
         computed: {
-            recordsLists() {
-                this.recordsList();
-                return this.records;
-            },
-            sortRecords(){
-                return this.recordsLists.slice().sort((a, b) => {
-                    return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
-                });
-            },
-            //日付逆転追加
-            reverseSortRecords() {
-                return this.sortRecords.slice().reverse();
-            },
+         
             //serchRecordsからキーワード候補抽出
             recordsKeyword() {
                 var keywordData = []
@@ -164,11 +152,7 @@
            },
         },
         methods: {
-            recordsList() {
-               const arr = Object.entries(this.records)
-               const result = arr.map(([key, value]) => ({key, value}))
-               this.records = result
-            },
+         
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }
                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
@@ -251,37 +235,7 @@
                     console.log(i);
                 }
             },
-           //day取得メソッド
-           getDay(start, end) {
-                                var dayData = []
-                                //startDayからendDayまでの日付を入れる配列
-                                var startDate = new Date(start)
-                                var endDate = new Date(end)
-                                while (startDate < endDate) {
-                                    dayData = [...dayData, startDate.getFullYear()  + 
-                    '-' +("00" + (startDate.getMonth() + 1)).slice(-2)+ '-' + 
-                    ("00" + (startDate.getDate())).slice(-2)]
-                                    startDate.setDate(startDate.getDate() + 1)
-                                    //startDayをdayData配列の中に入れ、+1日してwhileでendDayまでのループを回す
-
-                                }    
-                                dayData = [...dayData, endDate.getFullYear()  + 
-                    '-' +("00" + (endDate.getMonth() + 1)).slice(-2)+ '-' + 
-                    ("00" + (endDate.getDate())).slice(-2)]
-
-                                this.arrayDayData = dayData;       
-                                //dayData配列内にstartDayからendDayまでのデータが格納され、それをarrayDayDate(空の配列)内に入れ直す
-           },
-           //day空文字に変える
-           dayclearString() {
-               this.dayKeywordFirst = ''
-               this.dayKeywordSecond = ''
-
-           },
-           //ページをクリックした際の数字変化メソッド
-           clickCallback(num) {
-               this.currentPage = Number(num);
-           },
+  
            
 
         }

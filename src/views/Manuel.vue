@@ -26,7 +26,8 @@
             :filter-by-query="true"
             class="form-control m-0 p-0">
             </vue-simple-suggest>
-         </div>       
+         </div>
+         <hr>       
         <div class="col-12 scroll">
             <div v-for="(m,key) in serchManuel" :key="key">
             <p style="white-space:pre-wrap; word-wrap:break-word;">{{m.value.manuel}}</p>

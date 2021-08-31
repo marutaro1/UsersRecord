@@ -3,11 +3,18 @@
         <h2>利用者一覧</h2>
         <label class="col-5 col-form-label">キーワード検索: </label>
         <div class="col-5">
-            <input type="text" v-model="keyword" class="form-control">
+           
+            <vue-simple-suggest
+            v-model="keyword"
+            :list="usersKeyword"
+            :filter-by-query="true"
+            class="form-control m-0 p-0"
+            autocomplete="off">
+            </vue-simple-suggest>
         </div>
         <div>
         <label class="col-5 col-form-label">フロア検索: </label>
-        <div class="col-6 col-lg-2">
+        <div class="col-6 col-lg-3">
             <select v-model="keyword" class="form-select form-select-sm">
                 <option value="" selected="selected">選択してください</option>
                 <option value="3F">3F</option>
@@ -23,7 +30,7 @@
         </div>
         <hr>
         <div class="scroll-user">       
-           <div v-for="user in serchUsers" :key="user.key">
+           <div v-for="user in getPageData" :key="user.key">
            <table class="table col-1">
                 <tr>
                 <th class="text-rightr">
@@ -36,29 +43,43 @@
                 年齢: {{age(user.value.birthday)}}歳
                 <br>
                 要介護度:{{user.value.careLevel}}
-            
+                <br>
                 </td>
             </table>
             <hr>
             </div>
-        </div>       
+        </div>  
+        <vuejs-paginate
+            :page-count="pageCount"
+            :prev-text="'<'"
+            :next-text="'>'"
+            :click-handler="clickCallback"
+            :container-class="'pagination justify-content-center'"
+            :page-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-class="'page-item'"
+            :prev-link-class="'page-link'"
+            :next-class="'page-item'"
+            :next-link-class="'page-link'"
+            :first-last-button="true"
+            :first-button-text="'<<'"
+            :last-button-text="'>>'">
+            </vuejs-paginate>    
 
     </div>
 </template>
 <script>
     import { MixinUsersRecord } from '@/MixinUsersRecord.js';
+    import VuejsPaginate from 'vuejs-paginate';
+    import VueSimpleSuggest from 'vue-simple-suggest';
+    import 'vue-simple-suggest/dist/styles.css'
     export default {
         mixins: [MixinUsersRecord],
+        components: {
+           'vuejs-paginate': VuejsPaginate,
+           'vue-simple-suggest': VueSimpleSuggest,
+        },
         computed: {
-            usersLists() {
-                this.usersList();
-                return this.users;
-            },
-            sortNumber() {
-                return this.usersLists.slice().sort((a, b) => {
-                    return Number(a.value.number) - Number(b.value.number);
-                });
-            },
             serchUsers() {
                 return this.sortNumber.filter(user => {
                     return user.value.name.includes(this.keyword) ||
@@ -66,21 +87,35 @@
                      user.value.careLevel.includes(this.keyword) ;
                 });
             },
-            
+            //serchUsersからキーワード候補抽出
+            usersKeyword() {
+                var keywordData = []
+                var recordNumber = this.serchUsers.length
+                var i = 0
+                while (i < recordNumber) {
+                    keywordData = [...keywordData, this.serchUsers[i].value.name]
+                    i++
+                }
+                return keywordData;
+            },
+            //ページカウント
+            pageCount() {
+                   return Math.ceil(this.serchUsers.length / this.parPage)
+           },
+           //ページ機能追加
+           getPageData() {
+               var current = this.currentPage * this.parPage;
+               var start = current - this.parPage
+                   return this.serchUsers.slice(start, current)
+               }              
         },
-        methods:{
-            usersList() {
-               const arr = Object.entries(this.users)
-               const result = arr.map(([key, value]) => ({key, value}))
-               this.users = result
-            }
-        }
+      
 
     };
 </script>
 <style>
     .scroll-user {
-        height: 600px;
+        height: 500px;
         overflow: hidden;
         overflow-y: scroll;
     }

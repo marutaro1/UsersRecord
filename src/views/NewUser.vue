@@ -44,7 +44,6 @@
         </div>
         <br>
         <button @click="addUser" class="btn btn-primary">登録</button>
-        <button @click="testAddUsers" class="btn btn-primary">testデータ</button>
     </div>
 </template>
 <script>
@@ -63,18 +62,6 @@ export default {
              });
             alert('新規登録しました');
         },
-        //テスト用利用者100人登録メソッド
-        testAddUsers() {
-            for(let i = 0; i < 100; i++) {
-                this.usersRef.add({
-                    name: String(i),
-                    birthday: '1999-9-9',
-                    careLevel: '自立',
-                    number: i + '00',
-                    floor: parseInt(String(Number(i + '00') / 100)) + 'F'
-                });
-            }
-        }
     }
 };
 </script>
