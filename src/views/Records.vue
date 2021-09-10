@@ -1,6 +1,6 @@
 <template>
     <div @mousemove.once="getRecord">
-       
+
         <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
         <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
         <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
@@ -152,7 +152,6 @@
            },
         },
         methods: {
-         
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }
                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
@@ -160,14 +159,15 @@
                 record: this.record,
                 recordID: uid,
                 staffName: this.displayStaffName
-                }).then(
-                    res => {
-                    console.log(res);
-                             
-                      //alert('追加しました。')
-                      this.getRecord()
-                    }
-                );
+                }).then(res => {
+                    console.log(res)
+                    //record登録時、userに最新record登録日数を入れる
+                        this.usersRef.doc(this.userProfile[0][0]).update({
+                            checkRecordDay: this.getPageData[0].value.day
+                        })
+                    
+                    
+                });
                 this.day = new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
@@ -229,14 +229,12 @@
             
             //テスト用レコードデータ登録メソッド
             testRecords() {
-                for (var i = 0; i < 1000; i++) {
+                for (var i = 0; i < 10000; i++) {
                     this.testRecordValue(i);
                     this.addRecords(i);
                     console.log(i);
                 }
             },
-  
-           
 
         }
 

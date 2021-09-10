@@ -27,6 +27,10 @@
                 <option value="10F">10F</option>
             </select>
         </div>
+        <label class="col-5 col-form-label">最終記録登録日: </label>
+        <div class="col-6 col-lg-3">
+            <input type="date" v-model="checkDayKeyword" class="form-control">
+        </div>
         </div>
         <hr>
         <div class="scroll-user">       
@@ -44,6 +48,7 @@
                 <br>
                 要介護度:{{user.value.careLevel}}
                 <br>
+                最終記録入力日: {{user.value.checkRecordDay}}
                 </td>
             </table>
             <hr>
@@ -79,12 +84,22 @@
            'vuejs-paginate': VuejsPaginate,
            'vue-simple-suggest': VueSimpleSuggest,
         },
+        data() {
+            return {
+                checkDayKeyword: ''//最終記録登録日確認のためのキーワード
+            }
+        },
         computed: {
             serchUsers() {
                 return this.sortNumber.filter(user => {
                     return user.value.name.includes(this.keyword) ||
                      user.value.floor.includes(this.keyword) ||
-                     user.value.careLevel.includes(this.keyword) ;
+                     user.value.careLevel.includes(this.keyword)
+                });
+            },
+            serchCheckDay() {//checkDayKeywordに当てはまる最終記録登録日をサーチする
+                return this.sortNumber.filter(user => {
+                    return String(user.value.checkRecordDay).includes(this.checkDayKeyword)
                 });
             },
             //serchUsersからキーワード候補抽出
@@ -100,16 +115,24 @@
             },
             //ページカウント
             pageCount() {
-                   return Math.ceil(this.serchUsers.length / this.parPage)
+                   if(this.checkDayKeyword) {//checkDayKeywordがtrueなら↑のserchCheckDayの値にページをつける
+                        return Math.ceil(this.serchCheckDay.length / this.parPage)
+                   } else {//trueでないならserchUsersの値にページをつける
+                        return Math.ceil(this.serchUsers.length / this.parPage)
+                   }
            },
            //ページ機能追加
-           getPageData() {
+           getPageData() {//checkDayKeywordがtrueなら↑のserchCheckDayの値を表示
                var current = this.currentPage * this.parPage;
                var start = current - this.parPage
-                   return this.serchUsers.slice(start, current)
-               }              
+                   if(this.checkDayKeyword) {
+                    return this.serchCheckDay.slice(start, current)
+                   } else {//checkDayKeywordがfalseならserchUsersの値を表示
+                    return this.serchUsers.slice(start, current)
+                   }
+            }              
         },
-      
+
 
     };
 </script>

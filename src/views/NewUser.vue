@@ -58,7 +58,8 @@ export default {
              birthday: this.birthday,
              careLevel: this.careLevel,
              number: this.number + this.roomCheck,
-             floor: parseInt(String(Number(this.number) / 100)) + 'F'
+             floor: parseInt(String(Number(this.number) / 100)) + 'F',
+             checkRecordDay: ''
              });
             alert('新規登録しました');
         },
