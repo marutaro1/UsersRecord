@@ -14,6 +14,9 @@ import firebase from 'firebase';
                 day: new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
+                today: new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2),
                 arrayDayData: [],
                 record: '',
                 records: {},
@@ -26,6 +29,7 @@ import firebase from 'firebase';
                 staffs: {},
                 staffName: '',
                 displayStaffName: '',
+                staffOfficialPosition: '',
                 archives: {},
                 authentication: '',
                 manuel: '',
@@ -34,7 +38,9 @@ import firebase from 'firebase';
                 dayKeywordFirst: '',
                 dayKeywordSecond: '',
                 email: '',
-                password: ''
+                password: '',
+                department: '',
+                officialPosition: '',
             }
         },
         created() {
@@ -144,6 +150,7 @@ import firebase from 'firebase';
                         obj[doc.id] = doc.data()
                     })
                     this.staffs = obj;
+                    this.staffOfficialPosition = this.staffs[staffID].officialPosition;
                     this.displayStaffName = this.staffs[staffID].staffName;
                 });
             },
@@ -189,6 +196,16 @@ import firebase from 'firebase';
                     const result = arr.map(([key, value]) => ({key, value}))
                     this.records = result
                  },
+                 getRecordTest(key) {//RecordCheckでuserごとのrecord取得用
+                    this.usersRef.doc('users-record').collection(key).onSnapshot(querySnapshot => {
+                      const obj = {}
+                      querySnapshot.forEach(doc => {
+                      //querySnapshotが現在の全体のデータ
+                          obj[doc.id] = doc.data()
+                      })
+                      this.records = obj
+                    });
+                  },
                 //<--------------------------------------------------------------->
             }
         };
