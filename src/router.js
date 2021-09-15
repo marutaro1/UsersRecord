@@ -11,7 +11,7 @@ const Archives = () => import(/* webpackChunkName: "Archives" */ './views/Archiv
 const Manuel = () => import(/* webpackChunkName: "Manuel" */ './views/Manuel.vue');
 const MedicalHistory = () => import(/* webpackChunkName: "MedicalHistory" */ './views/MedicalHistory.vue');
 const SignUp = () => import(/* webpackChunkName: "SignUp" */ './views/SignUp.vue');
-
+const StaffDayWork = () => import(/* webpackChunkName: "StaffDayWork" */ './views/StaffDayWork');
 // import Users from './views/Users.vue';
 // import NewUser from './views/NewUser.vue';
 // import User from './views/User.vue';
@@ -33,6 +33,7 @@ export default new Router({
     routes: [
         {path: '/', component: Users},
         {path: '/SignUp', component: SignUp},
+        {path: '/StaffDayWork', component: StaffDayWork},
         {path: '/NewUser', component: NewUser},
         {path: '/User/:id', component: User, props: true,
         children: [
@@ -43,6 +44,7 @@ export default new Router({
         ]
         },
         {path: '/Archives', component: Archives, props: true},
+       
         
     ]
 });
