@@ -28,8 +28,9 @@ import firebase from 'firebase';
                 currentPage: 1,
                 staffs: {},
                 staffName: '',
+                staffKey: '',
                 displayStaffName: '',
-                staffOfficialPosition: '',
+                staffOfficialPosition: '',//ログインしたstaffのoffitialPositionを格納する値
                 archives: {},
                 authentication: '',
                 manuel: '',
@@ -150,7 +151,7 @@ import firebase from 'firebase';
                         obj[doc.id] = doc.data()
                     })
                     this.staffs = obj;
-                    this.staffOfficialPosition = this.staffs[staffID].officialPosition;
+                    this.staffKey = staffID
                     this.displayStaffName = this.staffs[staffID].staffName;
                 });
             },

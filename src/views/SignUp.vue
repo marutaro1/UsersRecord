@@ -24,11 +24,10 @@
             <div class="col-4 col-lg-2">
                 <select v-model="officialPosition" class="form-select form-select-sm">
                     <option value="" selected="selected">選択してください</option>
-                    <option value="リーダー">リーダー</option>
-                    <option value="主任">主任</option>
-                    <option value="係長">係長</option>
-                    <option value="課長">課長</option>
-                    <option value="部長">部長</option>
+                    <option value="leader">リーダー</option>
+                    <option value="chief">主任</option>
+                    <option value="chiefclerk">係長</option>
+                    <option value="sectionchief">課長</option>
                 </select>
             </div>
 
