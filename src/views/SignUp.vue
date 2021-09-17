@@ -13,10 +13,8 @@
                     <option value="">選択してください</option>
                     <option value="caregiver">介護</option>
                     <option value="nurse">看護</option>
-                    <option value="generalAffairs">総務</option>
                     <option value="rehabilitation">リハビリ</option>
-                    <option value="dietician">栄養</option>
-                    <option value="headquarters">本部</option>
+                    <option value="studentSupport">生活支援</option>
                 </select>
             </div>
             <br>

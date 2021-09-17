@@ -1,19 +1,26 @@
 <template>
     <div>
         <h2>業務</h2>
-        <label>日付</label>
-        <input type="date" v-model="day">
-        <label>部署</label>
-        <select v-model="departmentWorks">
+        <label class="col-6 col-form-label">日付</label>
+         <div class="col-6 col-lg-3">
+            <input type="date" v-model="today" class="form-control">
+         </div>
+        <label class="col-6 col-form-label">部署</label>
+        <div class="col-6 col-lg-2">
+        <select v-model="departmentWorks" class="form-select form-select-sm">
             <option value="">選択してください</option>
             <option value="caregiver">介護</option>
             <option value="nurse">看護</option>
+            <option value="rehabilitation">リハビリ</option>
+            <option value="studentSupport">生活支援</option>
         </select>
-        <button @click="staffDataGet">業務登録</button>
+        </div>
+        <button @click="staffDataGet" class="mt-2 btn btn-primary">業務登録</button>
         <div v-if="staffOfficialPosition !== ''">
             <div>
-                <label>新規業務登録</label>
-                <select v-model="dailyWorkData.week">
+                <label class="col-4 col-form-label">新規業務登録</label>
+                <div class="col-6 col-lg-3">
+                <select v-model="dailyWorkData.week" class="form-select form-select-sm mb-2">
                     <option value="">選択してください</option>
                     <option value="Sunday">日曜日</option>
                     <option value="Monday">月曜日</option>
@@ -23,52 +30,75 @@
                     <option value="Friday">金曜日</option>
                     <option value="saturday">土曜日</option>
                 </select>
-                <input type="text" v-model="dailyWorkData.dailyWork">
-                <button @click="addDailyWork">追加</button>
+                </div>
             </div>
-            <label> {{today}} 曜日:</label>
-            <select v-model="weekData">
-                    <option value="">選択してください</option>
-                    <option value="Sunday">日曜日</option>
-                    <option value="Monday">月曜日</option>
-                    <option value="Tuesday">火曜日</option>
-                    <option value="Wednesday">水曜日</option>
-                    <option value="Thursday">木曜日</option>
-                    <option value="Friday">金曜日</option>
-                    <option value="saturday">土曜日</option>
-                </select>
+            <div class="col-4 col-lg-5">
+                <input type="text" v-model="dailyWorkData.dailyWork" class="form-control">
+                <button @click="addDailyWork" class="btn btn-primary mt-2">追加</button>
+            </div>
+            <div>
+                <label class="col-5 col-form-label"> {{today}} 曜日:</label>
+                <div class="col-6 col-lg-3">
+                <select v-model="weekData" class="form-select form-select-sm">
+                        <option value="">選択してください</option>
+                        <option value="Sunday">日曜日</option>
+                        <option value="Monday">月曜日</option>
+                        <option value="Tuesday">火曜日</option>
+                        <option value="Wednesday">水曜日</option>
+                        <option value="Thursday">木曜日</option>
+                        <option value="Friday">金曜日</option>
+                        <option value="saturday">土曜日</option>
+                    </select>
+                </div>
+            </div>
             <div v-for="(staff, key) in checkStaffsPost" :key="key">
                 <div @click="getDailyWork">
-                    <p>職員名:</p>
-                    <select v-model="staff.staffName">
-                        <option v-for="(name, key) in staffDatas" :key="key" :value="name.staffName">{{name.staffName}}</option>
-                    </select>
+                    <label class="col-4 col-form-label">職員名:</label>
+                    <div class="col-6 col-lg-5">
+                        <select v-model="staff.staffName" class="form-select form-select-sm">
+                            <option v-for="(name, key) in staffDatas" :key="key" :value="name.staffName">{{name.staffName}}</option>
+                        </select>
+                    </div>
                 </div>
                 <div>
-                    <p>PHS番号:</p>
-                    <input type="text" v-model="staff.phs">
+                    <label class="col-4 col-form-label">PHS番号:</label>
+                    <div class="col-4 col-lg-2">
+                        <input type="text" v-model="staff.phs" class="form-control">
+                    </div>
                 </div>
                 <div>
-                    <p>{{today}}業務:</p>
-                    <select v-model="staff.work" multiple>
-                        <option v-for="(work, key) in dailyWorks" :key="key" :value="work.dailyWorkData">{{work.dailyWorkData}}</option>
-                    </select>
+                    <label class="col-5 col-form-label">{{today}}業務:</label>
+                    <div class="col-3 col-lg-2">
+                        <select v-model="staff.work" class="form-select form-select-sm" multiple>
+                            <option v-for="(work, key) in dailyWorks" :key="key" :value="work.dailyWorkData">{{work.dailyWorkData}}</option>
+                        </select>
+                    </div>
                 </div>
-                <button v-if="!limitOver" @click="addStaffData">追加</button>
+                <div>
+                    <label class="col-4 col-form-label">追加業務:</label>
+                    <div class="col-6 col-lg-6">
+                        <textarea v-model="staff.additionalWork" class="form-control"></textarea>
+                    </div>
+                </div>
+            
+                <button v-if="!limitOver" @click="addStaffData" class="my-3 btn btn-primary">職員追加</button>
             </div>
-            <button @click="addAllDailyWork">登録</button>
+            <button @click="addAllDailyWork" class="btn btn-primary">{{today}}:業務登録</button>
         </div>
         <hr>
-        <button @click="getAllDailyWork">取得</button>
+        <button @click="getAllDailyWork" class=" mb-2 btn btn-primary">{{today}}業務:表示</button>
  
-        <div v-for="data in dailyWorkAllData[day]" :key="data.key">
-            <div v-for="i in dailyWorkAllData[day].checkStaffsPost.length" :key="i">
+        <div v-for="data in dailyWorkAllData[today]" :key="data.key">
+            <div v-for="i in dailyWorkAllData[today].checkStaffsPost.length" :key="i">
                 <p>職員名:{{data[i - 1 ].staffName}}</p>
                 <p>PHS番号:{{data[i - 1 ].phs}}</p>
                 <p>業務内容:</p>
                 <ul>
                 <li v-for="n in data[i - 1].work.length" :key="n">
                     {{data[i - 1 ].work[n - 1]}}
+                </li>
+                <li style="white-space:pre-wrap; word-wrap:break-word">
+                    {{data[i - 1].additionalWork}}
                 </li>
                 <hr>
                 </ul>
@@ -94,6 +124,7 @@ export default {
                 staffName: '',
                 phs: '',
                 work: [],
+                additionalWork: '',
             }],//staffDatasの中のstaffNameを格納している配列
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
             count: 1,
@@ -111,7 +142,7 @@ export default {
     },
     methods: {
         staffDataGet() {//staff達のデータを取得するメソッド
-            if(this.day === '' || this.departmentWorks === '') { return }
+            if(this.today === '' || this.departmentWorks === '') { return }
             this.usersRef.doc('staffs').collection(this.departmentWorks).onSnapshot(querySnapshot => {
                       const obj = {}
                       querySnapshot.forEach(doc => {
@@ -136,7 +167,7 @@ export default {
             });
         },
         addAllDailyWork() {//書き出したstaffのname/phs/workを、staffsのdocument→部署ごとのcollection→業務を行う日付のdocument内に登録する
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.day).set({
+            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today).set({
                 checkStaffsPost: this.checkStaffsPost
             })
         },
@@ -144,7 +175,7 @@ export default {
             this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
-                          if(String(doc.id) !== String(this.day)) { return }
+                          if(String(doc.id) !== String(this.today)) { return }
                           obj[doc.id] = doc.data()
                       });
                       console.log(obj)
@@ -164,6 +195,7 @@ export default {
                 staffName: '',
                 phs: '',
                 work: [],
+                additionalWork: '',
             }
         },
     }
