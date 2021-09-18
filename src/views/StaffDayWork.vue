@@ -75,9 +75,17 @@
                     </div>
                 </div>
                 <div>
-                    <label class="col-4 col-form-label">追加業務:</label>
+                    <label class="col-4 col-form-label">追加業務1:</label>
                     <div class="col-6 col-lg-6">
-                        <textarea v-model="staff.additionalWork" class="form-control"></textarea>
+                        <input v-model="staff.additionalWorkOne" class="form-control">
+                    </div>
+                    <label class="col-4 col-form-label">追加業務2:</label>
+                    <div class="col-6 col-lg-6">
+                        <input v-model="staff.additionalWorkTwo" class="form-control">
+                    </div>
+                    <label class="col-4 col-form-label">追加業務3:</label>
+                    <div class="col-6 col-lg-6">
+                        <input v-model="staff.additionalWorkThree" class="form-control">
                     </div>
                 </div>
             
@@ -97,8 +105,14 @@
                 <li v-for="n in data[i - 1].work.length" :key="n">
                     {{data[i - 1 ].work[n - 1]}}
                 </li>
-                <li style="white-space:pre-wrap; word-wrap:break-word">
-                    {{data[i - 1].additionalWork}}
+                <li>
+                    {{data[i - 1].additionalWorkOne}}
+                </li>
+                <li>
+                    {{data[i - 1].additionalWorkTwo}}
+                </li>
+                <li>
+                    {{data[i - 1].additionalWorkThree}}
                 </li>
                 <hr>
                 </ul>
@@ -124,7 +138,9 @@ export default {
                 staffName: '',
                 phs: '',
                 work: [],
-                additionalWork: '',
+                additionalWorkOne: '',
+                additionalWorkTwo: '',
+                additionalWorkThree: '',
             }],//staffDatasの中のstaffNameを格納している配列
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
             count: 1,
@@ -195,7 +211,9 @@ export default {
                 staffName: '',
                 phs: '',
                 work: [],
-                additionalWork: '',
+                additionalWorkOne: '',
+                additionalWorkTwo: '',
+                additionalWorkThree: '',
             }
         },
     }
