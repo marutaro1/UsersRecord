@@ -179,8 +179,8 @@
                  alert('削除しました')
                  this.getRecord() 
             },
-            getRecord() {
-              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+            getRecord() {//orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
+              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).orderBy('day', 'desc').limit(10).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
