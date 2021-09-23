@@ -93,31 +93,10 @@
             </div>
             <button @click="addAllDailyWork" class="btn btn-primary">{{today}}:業務登録</button>
         </div>
-        <hr>
-        <button @click="getAllDailyWork" class=" mb-2 btn btn-primary">{{today}}業務:表示</button>
- 
-        <div v-for="data in dailyWorkAllData[today]" :key="data.key">
-            <div v-for="i in dailyWorkAllData[today].checkStaffsPost.length" :key="i">
-                <p>職員名:{{data[i - 1 ].staffName}}</p>
-                <p>PHS番号:{{data[i - 1 ].phs}}</p>
-                <p>業務内容:</p>
-                <ul>
-                <li v-for="n in data[i - 1].work.length" :key="n">
-                    {{data[i - 1 ].work[n - 1]}}
-                </li>
-                <li>
-                    {{data[i - 1].additionalWorkOne}}
-                </li>
-                <li>
-                    {{data[i - 1].additionalWorkTwo}}
-                </li>
-                <li>
-                    {{data[i - 1].additionalWorkThree}}
-                </li>
-                <hr>
-                </ul>
-            </div>
-        </div>
+        
+        <hr> 
+       <button @click="getAllDailyWork" class=" mb-2 btn btn-primary">{{today}}業務:表示</button>
+        <router-view :dailyWorkAllData="this.dailyWorkAllData" :departmentWorks="this.departmentWorks" :today="this.today"></router-view>
     </div>
 </template>
 <script>
@@ -141,10 +120,15 @@ export default {
                 additionalWorkOne: '',
                 additionalWorkTwo: '',
                 additionalWorkThree: '',
+                completework: {},
             }],//staffDatasの中のstaffNameを格納している配列
+            
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
             count: 1,
-            limit: 10
+            limit: 10,
+            today: new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2),
         }
     },
     computed: {
@@ -157,6 +141,9 @@ export default {
         }
     },
     methods: {
+        test(value) {
+            console.log(value)
+        },
         staffDataGet() {//staff達のデータを取得するメソッド
             if(this.today === '' || this.departmentWorks === '') { return }
             this.usersRef.doc('staffs').collection(this.departmentWorks).onSnapshot(querySnapshot => {
@@ -214,6 +201,7 @@ export default {
                 additionalWorkOne: '',
                 additionalWorkTwo: '',
                 additionalWorkThree: '',
+                completework: {},
             }
         },
     }
