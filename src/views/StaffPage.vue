@@ -19,9 +19,7 @@
         
        <p>{{plofile.additionalWorkThree}}</p>
         <button @click="position(plofile.additionalWorkThree)">完了</button>
-       <p>完了業務:</p>
-       <p>{{completeWorksPost}}</p>
-       <button>登録</button>
+       <button @click="addCompleteWork">登録</button>
       </div>
     </div>
 </template>
@@ -29,12 +27,12 @@
 
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
-        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks'],
+        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks', 'completeWorkGetData'],
         mixins: [MixinUsersRecord],
         data() {
             return {
                 test: '',
-                staffDatas: {},   
+                staffDatas: {},  
                 completeWorksPost: [],
             }
         },
@@ -42,6 +40,10 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
             staffPlofile() {
                 this.objectStaff
                 return this.staffDatas
+            },
+            getCompleteWorkDataList() {
+                this.getWorkDataList()
+                return this.completeWorkGetData
             }
         },
         methods: {
@@ -61,6 +63,18 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                 this.completeWorksPost = [...this.completeWorksPost, value]
                 console.log(this.completeWorksPost)
             },
+              
+            addCompleteWork() {
+                var list = this.completeWorkGetData[this.today + 'completeWork'].completeWorks
+                var post = this.completeWorksPost
+                var strPost = post.join(' ')
+                var strList = list
+                this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').set({
+                   completeWorks: (strList + '  ' + strPost).replace('undefined ', '')
+                })
+                console.log(list)
+                console.log(strPost)
+            }
         }
     }
 </script>
