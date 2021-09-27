@@ -195,6 +195,12 @@
                 day: this.newDay,
                 record: this.newRecord,
                 staffName: this.displayStaffName
+                }).then(res => {
+                    console.log(res)
+                    //record登録時、userに最新record登録日数を入れる
+                        this.usersRef.doc(this.userProfile[0][0]).update({
+                            checkRecordDay: this.getPageData[0].value.day
+                        })
                 });
                alert('更新しました');
                this.getRecord()

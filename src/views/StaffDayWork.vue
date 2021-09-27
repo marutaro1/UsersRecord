@@ -67,9 +67,9 @@
                     </div>
                 </div>
                 <div>
-                    <label class="col-5 col-form-label">{{today}}業務:</label>
-                    <div class="col-3 col-lg-2">
-                        <select v-model="staff.work" class="form-select form-select-sm" multiple>
+                    <label class="col-5 col-form-label">{{today}}:業務</label>
+                    <div class="col-4 col-lg-3">
+                        <select v-model="staff.work" size="2" class="form-select form-select-sm" multiple>
                             <option v-for="(work, key) in dailyWorks" :key="key" :value="work.dailyWorkData">{{work.dailyWorkData}}</option>
                         </select>
                     </div>
@@ -86,22 +86,19 @@
                     <label class="col-4 col-form-label">追加業務3:</label>
                     <div class="col-6 col-lg-6">
                         <input v-model="staff.additionalWorkThree" class="form-control">
-                    </div>
+                    </div>  
                 </div>
             
                 <button v-if="!limitOver" @click="addStaffData" class="my-3 btn btn-primary">職員追加</button>
             </div>
             <button @click="addAllDailyWork" class="btn btn-primary">{{today}}:業務登録</button>
         </div>
-        
-        <hr> 
-        <button @click="getCompleteWork">完了業務表示</button>      
-        <div v-for="(work, key) in completeWorkGetData" :key="key">
-        {{work.completeWorks}}
-        </div>
         <hr>
-       <button @click="getAllDailyWork" class=" mb-2 btn btn-primary">{{today}}業務:表示</button>
-        <router-view :dailyWorkAllData="this.dailyWorkAllData" :departmentWorks="this.departmentWorks" :today="this.today" :completeWorkGetData="this.completeWorkGetData"></router-view>
+        <button @click="getAllDailyWork()" class=" mb-2 btn btn-primary">{{today}}:業務表示</button>
+       
+        <br>
+        <router-view :dailyWorkAllData="this.dailyWorkAllData" :departmentWorks="this.departmentWorks" :today="this.today" :completeWorkGetData="this.completeWorkGetData" :staffCompleteWorkCheck="this.staffCompleteWorkCheck"></router-view>
+        
     </div>
 </template>
 <script>
@@ -128,6 +125,11 @@ export default {
             }],//staffDatasの中のstaffNameを格納している配列
             completeWorkGetData: {},
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
+            staffCompleteWorkCheck: {
+                staffName: '',
+                workCheck: [],
+                additionalWorkCheck: [],
+            },
             count: 1,
             limit: 10,
             today: new Date().getFullYear()  + 
@@ -176,11 +178,31 @@ export default {
         addAllDailyWork() {//書き出したstaffのname/phs/workを、staffsのdocument→部署ごとのcollection→業務を行う日付のdocument内に登録する
             this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today).set({
                 checkStaffsPost: this.checkStaffsPost
-            }),
-            this.completeWorkCreate()
-            this.getCompleteWork
+            }).then(res => {
+                console.log(res)
+                this.addDocStaffName()
+                this.getCompleteWork()
+            })
+        },
+        addDocStaffName() {
+            var i = 0
+            while(i < Number(this.dailyWorkAllData[this.today].checkStaffsPost.length)) {
+            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(this.dailyWorkAllData[this.today].checkStaffsPost[i].staffName).set({
+                    workCheck: [],
+                    additionalWorkCheck: []
+                })
+                i++
+            }
         },
         getAllDailyWork() {//addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
+            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+                var obj = {}
+                    querySnapshot.forEach(doc => {
+                        obj[doc.id] = doc.data()
+                    });
+                    console.log(obj)
+                    this.staffCompleteWorkCheck = obj       
+            });
             this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
@@ -189,7 +211,10 @@ export default {
                       });
                       console.log(obj)
                       this.dailyWorkAllData = obj
+                     
             });
+            
+             
         },
         addStaffData() {//登録するためのstaffのデータを追加するためのメソッド
             this.checkStaffsPost.push(this.independentObject())
@@ -207,13 +232,18 @@ export default {
                           obj[doc.id] = doc.data()
                       });
                       this.completeWorkGetData = obj
-                      
             });
         },
-        completeWorkCreate() {
-             this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').set({
-                   completeWorks: ''
-                })
+        getWorkCheckChange() {
+            console.log(this.dailyWorkAllData[this.today].checkStaffsPost.length)
+                this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+                   const obj = {}
+                      querySnapshot.forEach(doc => {
+                          obj[doc.id] = doc.data()
+                      });
+                      console.log(obj)
+                      this.staffCompleteWorkCheck = obj       
+            });
         },
         independentObject() {
             return {

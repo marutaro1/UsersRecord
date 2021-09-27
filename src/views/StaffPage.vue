@@ -1,50 +1,68 @@
 <template>
     <div @mousemove.once="objectStaff">
       <h3>業務編集</h3>
-      <router-link to="/StaffDayWork/Works">戻る</router-link>
+      <router-link to="/StaffDayWork/Works" class="btn btn-primary p-1">戻る</router-link>
       <div v-for="(plofile, key) in staffPlofile" :key="key">
-        <p>{{plofile.staffName}}</p>
-        <p>{{plofile.phs}}</p>
-        <div v-for="i in plofile.work.length" :key="i">
-            <p>{{plofile.work[i - 1]}}</p>
-        <button @click="position(plofile.work[i - 1])">完了</button>
+        <div @mousemove.once="getWorkCheckChange(plofile.staffName)">
+            <p>職員名:{{plofile.staffName}}</p>
+            <p>PHS番号:{{plofile.phs}}</p>
+            <div v-for="i in plofile.work.length" :key="i">
+            <p>業務:{{plofile.work[i - 1]}}:{{workCheck[i - 1]}}
+            <button @click="workCheckChange([i - 1])" class="btn btn-primary p-1">
+                <div v-if="!workCheck[i - 1]">完了</div>
+                <div v-else>未遂</div>
+            </button>
+            </p>
         </div>
-        <p>{{plofile.additionalWorkOne}}</p>
-        {{test}}
-        <input type="text" v-model="plofile.additionalWorkOne">
-        <button @click="position(plofile.additionalWorkOne)">完了</button>
-        
-        <p>{{plofile.additionalWorkTwo}}</p>
-        <button @click="position(plofile.additionalWorkTwo)">完了</button>
-        
-       <p>{{plofile.additionalWorkThree}}</p>
-        <button @click="position(plofile.additionalWorkThree)">完了</button>
-       <button @click="addCompleteWork">登録</button>
+        </div>
+        <p>業務:{{plofile.additionalWorkOne}}:{{additionalWorkCheck[0]}}
+        <button @click="additionalWorkCheckChange([0])" class="btn btn-primary p-1">
+            <div v-if="!additionalWorkCheck[0]">完了</div>
+            <div v-else>未遂</div>
+        </button>
+        </p>
+        <p>業務:{{plofile.additionalWorkTwo}}:{{additionalWorkCheck[1]}}
+        <button @click="additionalWorkCheckChange([1])" class="btn btn-primary p-1">
+            <div v-if="!additionalWorkCheck[1]">完了</div>
+            <div v-else>未遂</div>
+        </button>
+        </p>
+       <p>業務:{{plofile.additionalWorkThree}}:{{additionalWorkCheck[2]}}
+        <button @click="additionalWorkCheckChange([2])" class="btn btn-primary p-1">
+            <div v-if="!additionalWorkCheck[2]">完了</div>
+            <div v-else>未遂</div>
+        </button>
+        </p>
+       <button @click="addWorkCheckChange(plofile.staffName)" class="mb-2 btn btn-primary">登録</button>
+      
       </div>
+      <hr>
     </div>
 </template>
 <script>
-
+import Vue from 'vue'
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
-        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks', 'completeWorkGetData'],
+        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks', 'completeWorkGetData', 'staffCompleteWorkCheck'],
         mixins: [MixinUsersRecord],
         data() {
             return {
-                test: '',
+                staffCompleteWorkData: {},
                 staffDatas: {},  
                 completeWorksPost: [],
+                workCheck: [],
+                additionalWorkCheck: [],
             }
         },
         computed: {
             staffPlofile() {
-                this.objectStaff
+                this.objectStaff()
                 return this.staffDatas
             },
             getCompleteWorkDataList() {
                 this.getWorkDataList()
                 return this.completeWorkGetData
-            }
+            },
         },
         methods: {
                objectStaff() {
@@ -58,22 +76,43 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                 })
                 this.staffDatas = result
             },
-            position(value) {
-                value = value + '完了'
-                this.completeWorksPost = [...this.completeWorksPost, value]
-                console.log(this.completeWorksPost)
+            workCheckChange(i) {
+                if(this.workCheck[i] === '') {
+                   Vue.set(this.workCheck, i, '完了')
+                    console.log(this.workCheck)
+                } else {
+                   Vue.set(this.workCheck, i, '')
+                    console.log(this.workCheck)
+                }
             },
-              
-            addCompleteWork() {
-                var list = this.completeWorkGetData[this.today + 'completeWork'].completeWorks
-                var post = this.completeWorksPost
-                var strPost = post.join(' ')
-                var strList = list
-                this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').set({
-                   completeWorks: (strList + '  ' + strPost).replace('undefined ', '')
-                })
-                console.log(list)
-                console.log(strPost)
+            additionalWorkCheckChange(i) {
+                if(this.additionalWorkCheck[i] === '') {
+                   Vue.set(this.additionalWorkCheck, i, '完了')
+                    console.log(this.additionalWorkCheck)
+                } else {
+                   Vue.set(this.additionalWorkCheck, i, '')
+                    console.log(this.additionalWorkCheck)
+                }  
+            },
+            addWorkCheckChange(staffName) {
+                 this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(staffName).set({
+                   workCheck: this.workCheck, 
+                   additionalWorkCheck: this.additionalWorkCheck
+                }).then(() => this.$router.push("/StaffDayWork/Works"), alert('完了業務を登録しました.'))
+            },
+            getWorkCheckChange(staffName) {
+                 this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+                   const obj = {}
+                      querySnapshot.forEach(doc => {
+                          if(doc.id !== staffName) {return}
+                          obj[doc.id] = doc.data()
+                      });
+                      console.log(obj)
+                      console.log(obj[staffName].workCheck)
+                      this.workCheck = obj[staffName].workCheck
+                      console.log(obj[staffName].additionalWorkCheck)
+                      this.additionalWorkCheck = obj[staffName].additionalWorkCheck
+                });
             }
         }
     }
