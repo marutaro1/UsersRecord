@@ -4,16 +4,16 @@ import Router from 'vue-router';
 const Users = () => import(/* webpackChunkName: "Users" */ './views/Users.vue');
 const NewUser = () => import(/* webpackChunkName: "NewUser" */ './views/NewUser.vue');
 const User = () => import(/* webpackChunkName: "User" */ './views/User.vue');
-
 const Records = () => import(/* webpackChunkName: "Records" */ './views/Records.vue');
 const UpdateUser = () => import(/* webpackChunkName: "UpdateUser" */ './views/UpdateUser.vue');
 const Archives = () => import(/* webpackChunkName: "Archives" */ './views/Archives.vue');
 const Manuel = () => import(/* webpackChunkName: "Manuel" */ './views/Manuel.vue');
 const MedicalHistory = () => import(/* webpackChunkName: "MedicalHistory" */ './views/MedicalHistory.vue');
 const SignUp = () => import(/* webpackChunkName: "SignUp" */ './views/SignUp.vue');
-const StaffDayWork = () => import(/* webpackChunkName: "StaffDayWork" */ './views/StaffDayWork');
-const Works = () => import(/* webpackChunkName: "Works" */ './views/Works');
-const StaffPage = () => import(/* webpackChunkName: "StaffPage" */ './views/StaffPage');
+const StaffDayWork = () => import(/* webpackChunkName: "StaffDayWork" */ './views/StaffDayWork.vue');
+const Works = () => import(/* webpackChunkName: "Works" */ './views/Works.vue');
+const StaffPage = () => import(/* webpackChunkName: "StaffPage" */ './views/StaffPage.vue');
+const Staff = () => import(/* webpackChunkName: "Staff" */ './views/Staff.vue');
 // import Users from './views/Users.vue';
 // import NewUser from './views/NewUser.vue';
 // import User from './views/User.vue';
@@ -35,6 +35,7 @@ export default new Router({
     routes: [
         {path: '/', component: Users},
         {path: '/SignUp', component: SignUp},
+        {path: '/Staff', component: Staff},
         {path: '/StaffDayWork', component: StaffDayWork, props: true, 
         children: [
             {path: '/StaffDayWork/:id/StaffPage', component: StaffPage, props: true},

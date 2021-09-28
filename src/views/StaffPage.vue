@@ -47,11 +47,9 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
         mixins: [MixinUsersRecord],
         data() {
             return {
-                staffCompleteWorkData: {},
                 staffDatas: {},  
-                completeWorksPost: [],
-                workCheck: [],
-                additionalWorkCheck: [],
+                workCheck: [''],
+                additionalWorkCheck: ['', '', ''],
             }
         },
         computed: {
@@ -96,7 +94,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
             },
             addWorkCheckChange(staffName) {
                  this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(staffName).set({
-                   workCheck: this.workCheck, 
+                   workCheck: this.workCheck,
                    additionalWorkCheck: this.additionalWorkCheck
                 }).then(() => this.$router.push("/StaffDayWork/Works"), alert('完了業務を登録しました.'))
             },

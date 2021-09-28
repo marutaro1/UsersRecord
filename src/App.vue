@@ -28,11 +28,10 @@
     <div v-else>
       <nav class="navbar navbar-expand p-0 col-12">
         <ul class="nav nav-tabs col-7 col-lg-10 mt-0 py-1">
-          <li class="nav-item"><router-link to="/" class="btn btn-primary m-1" style="font-size: small;">利用者一覧</router-link></li>
-          <li class="nav-item"><router-link to="/NewUser" class="btn btn-primary m-1" style="font-size: small;">利用者登録</router-link></li>
-          <li class="nav-item"><router-link to="/Archives" class="btn btn-primary m-1" style="font-size: small;">記録まとめ</router-link></li>
-          <li class="nav-item"><router-link to="/SignUp" class="btn btn-primary m-1" style="font-size: small;">職員登録</router-link></li>
-          <li class="nav-item"><router-link to="/StaffDayWork/Works" class="btn btn-primary m-1" style="font-size: small;">業務確認</router-link></li>
+          <li class="nav-item"><router-link to="/" class="btn btn-primary px-1 m-1">利用者一覧</router-link></li>
+          <li class="nav-item"><router-link to="/NewUser" class="btn btn-primary px-1 m-1">利用者登録</router-link></li>
+          <li class="nav-item"><router-link to="/Archives" class="btn btn-primary px-1 m-1">記録まとめ</router-link></li>
+          <li class="nav-item"><router-link to="/Staff" class="btn btn-primary px-1 m-1">職員関係</router-link></li>
         </ul>
         <ul class="col-5 col-lg-2 pt-3 text-center">
           <li @click="logOut" class="btn btn-warning p-2">ログアウト</li>

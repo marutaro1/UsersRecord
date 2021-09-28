@@ -159,14 +159,11 @@
                 record: this.record,
                 recordID: uid,
                 staffName: this.displayStaffName
-                }).then(res => {
-                    console.log(res)
+                }).then(() => {
                     //record登録時、userに最新record登録日数を入れる
                         this.usersRef.doc(this.userProfile[0][0]).update({
                             checkRecordDay: this.getPageData[0].value.day
                         })
-                    
-                    
                 });
                 this.day = new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
@@ -175,9 +172,10 @@
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
             },
             deleteRecord(recID) {
-                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete();
+                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(() => {
                  alert('削除しました')
                  this.getRecord() 
+                 })
             },
             getRecord() {//orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
               this.usersRef.doc('users-record').collection(this.userProfile[0][0]).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
@@ -195,25 +193,25 @@
                 day: this.newDay,
                 record: this.newRecord,
                 staffName: this.displayStaffName
-                }).then(res => {
-                    console.log(res)
+                }).then(() => {
                     //record登録時、userに最新record登録日数を入れる
                         this.usersRef.doc(this.userProfile[0][0]).update({
                             checkRecordDay: this.getPageData[0].value.day
                         })
-                });
                alert('更新しました');
                this.getRecord()
                this.newDay = ''
                this.newRecord = ''
+                });
             },
             addArchives(record) {
                this.usersRef.doc('users-record').collection('archives').doc(this.id).set({
                 userName: this.userName,
                 userNumber: this.id,
                 archive: record
-                });
-                alert('追加しました');
+                }).then(() => {
+                    alert('追加しました');
+                })
             },
             templateRecord() {
                  const date1 = new Date();
