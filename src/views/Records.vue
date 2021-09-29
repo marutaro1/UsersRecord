@@ -1,5 +1,5 @@
 <template>
-    <div @mousemove.once="getRecord">
+    <div @mousemove.once="getRecord(dayData)">
 
         <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
         <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
@@ -55,11 +55,26 @@
          </div>
         <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
         <hr>
+        <div>
+            <label>各月の記録抽出:</label>
+            <select v-model="selectDayValue">
+                <option value="">選択して下さい</option>
+                <option v-for="i in 12" :key="i" :value="('00' + i).slice(-2)">{{('00' + i).slice(-2)}}月</option>
+            </select>
+            
+             <button @click="getRecord(selectDayValue)">{{selectDayValue}}月分表示</button>
+        </div>
+        <hr>
 
          <div class="scroll">
-    
-
+            <div v-if="!selectDayValue">
+                <p>{{dayData}}月の記録</p>
+            </div>
+            <div v-else>
+                <p>{{selectDayValue}}月の記録</p>
+            </div>
                 <div v-for="(rec, key) in getPageData" :key="key">
+                
                 <p>{{rec.value.day}}</p>
                 <p style="white-space:pre-wrap; word-wrap:break-word;">{{rec.value.record}}</p>
                 <p>登録者: {{rec.value.staffName}}</p>
@@ -103,6 +118,12 @@
        components: {
            'vuejs-paginate': VuejsPaginate,
            'vue-simple-suggest': VueSimpleSuggest,
+       },
+       data() {
+           return {
+             dayData: ("00" + (new Date().getMonth() + 1)).slice(-2),
+             selectDayValue: ''
+           }
        },
         computed: {
          
@@ -174,11 +195,16 @@
             deleteRecord(recID) {
                  this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(() => {
                  alert('削除しました')
-                 this.getRecord() 
+            
                  })
             },
-            getRecord() {//orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
-              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
+            getRecord(i) {
+                //orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
+                //where('day' '>=' startDay)で日付が指定した月の1日以上ののもの, where('day', '<=' endDay)で日付が指定した月以下
+              var startDay = new Date().getFullYear() + '-' + ("00" + i).slice(-2) + '-01'
+              var endDay = new Date().getFullYear() + '-' + ("00" + i).slice(-2) + '-31'
+
+              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
@@ -199,9 +225,9 @@
                             checkRecordDay: this.getPageData[0].value.day
                         })
                alert('更新しました');
-               this.getRecord()
                this.newDay = ''
                this.newRecord = ''
+               this.selectDayValue = ''
                 });
             },
             addArchives(record) {
