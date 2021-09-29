@@ -33,6 +33,10 @@
             <div v-else>未遂</div>
         </button>
         </p>
+        <div>
+            <label>メモ:</label>
+            <textarea v-model="staffMemo"></textarea>
+        </div>
        <button @click="addWorkCheckChange(plofile.staffName)" class="mb-2 btn btn-primary">登録</button>
       
       </div>
@@ -50,6 +54,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                 staffDatas: {},  
                 workCheck: [''],
                 additionalWorkCheck: ['', '', ''],
+                staffMemo: '',
             }
         },
         computed: {
@@ -95,8 +100,12 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
             addWorkCheckChange(staffName) {
                  this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(staffName).set({
                    workCheck: this.workCheck,
-                   additionalWorkCheck: this.additionalWorkCheck
-                }).then(() => this.$router.push("/StaffDayWork/Works"), alert('完了業務を登録しました.'))
+                   additionalWorkCheck: this.additionalWorkCheck,
+                   staffMemo: this.staffMemo
+                }).then(() => 
+                    this.$router.push("/StaffDayWork/Works"),
+                    alert('完了業務を登録しました。')
+                 )
             },
             getWorkCheckChange(staffName) {
                  this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
@@ -110,6 +119,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                       this.workCheck = obj[staffName].workCheck
                       console.log(obj[staffName].additionalWorkCheck)
                       this.additionalWorkCheck = obj[staffName].additionalWorkCheck
+                      this.staffMemo = obj[staffName].staffMemo
                 });
             }
         }

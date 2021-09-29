@@ -126,9 +126,9 @@ export default {
             completeWorkGetData: {},
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
             staffCompleteWorkCheck: {
-                staffName: '',
                 workCheck: [''],
                 additionalWorkCheck: ['','',''],
+                staffMemo: '',
             },
             count: 1,
             limit: 10,
@@ -185,7 +185,8 @@ export default {
             while(i < Number(this.dailyWorkAllData[this.today].checkStaffsPost.length)) {
             this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(this.dailyWorkAllData[this.today].checkStaffsPost[i].staffName).set({
                     workCheck: [''],
-                    additionalWorkCheck: ['','','']
+                    additionalWorkCheck: ['','',''],
+                    staffMemo: '',
                 })
                 i++
             }
