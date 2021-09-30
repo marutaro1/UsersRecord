@@ -14,7 +14,9 @@ import firebase from 'firebase';
                 day: new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
-                
+                today: new Date().getFullYear()  + 
+                '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
+				("00" + (new Date().getDate())).slice(-2),
                 arrayDayData: [],
                 record: '',
                 records: {},
@@ -40,21 +42,13 @@ import firebase from 'firebase';
                 password: '',
                 department: '',
                 officialPosition: '',
+                changeValue: false,//root pathで記録未登録者ボタンと切り替えるための値
             }
         },
         created() {
             this.db = firebase.firestore()
             this.usersRef = this.db.collection('users')
-            this.usersRef.onSnapshot(querySnapshot => {
-                const obj = {}
-                querySnapshot.forEach(doc => {
-                //querySnapshotが現在の全体のデータ
-                    obj[doc.id] = doc.data()
-                    //doc.idはランダムな文字列のid
-                })
-                this.users = obj
-            });
-
+            this.getUsers()
           
             this._uid = Math.floor( Math.random(this._uid) * 100);
         },
@@ -121,6 +115,18 @@ import firebase from 'firebase';
             
         },
         methods: {
+            getUsers() {//user達のデータを取得する
+                this.changeValue = false
+                this.usersRef.onSnapshot(querySnapshot => {
+                    const obj = {}
+                    querySnapshot.forEach(doc => {
+                    //querySnapshotが現在の全体のデータ
+                        obj[doc.id] = doc.data()
+                        //doc.idはランダムな文字列のid
+                    })
+                    this.users = obj
+                });
+            },
             objectUsers() {
                 var arr = Object.entries(this.users)
                 var result = arr.filter((value) => {

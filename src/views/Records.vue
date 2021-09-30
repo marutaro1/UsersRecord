@@ -26,7 +26,7 @@
             <h4>更新用フォーム</h4>
             <label class="col-2 col-form-label">日付: </label>
             <div class="col-8 col-lg-3">
-                <input type="datetime-local"  v-model="newDay" class="form-control">
+                <input type="datetime-local" v-model="newDay" class="form-control">
             </div>
             <br>
             <label class="col-3 col-form-label">記録: </label>
@@ -35,7 +35,7 @@
             </div>
          </div>
          <hr>
-         <label class="col-3 col-form-label">キーワード検索:</label>
+         <label class="col-5 col-form-label">キーワード検索:</label>
          <div class="col-6 mb-2">
             <vue-simple-suggest
             v-model="keyword"
@@ -56,13 +56,11 @@
         <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
         <hr>
         <div>
-            <label>各月の記録抽出:</label>
-            <select v-model="selectDayValue">
-                <option value="">選択して下さい</option>
-                <option v-for="i in 12" :key="i" :value="('00' + i).slice(-2)">{{('00' + i).slice(-2)}}月</option>
-            </select>
-            
-             <button @click="getRecord(selectDayValue)">{{selectDayValue}}月分表示</button>
+            <label lass="col-2 col-form-label">各月の記録抽出:</label>
+            <div class="col-6 my-2">
+                <input type="month" v-model="selectDayValue" class="form-control">
+            </div>
+             <button @click="getRecord(selectDayValue)" class="btn btn-primary px-1">{{selectDayValue}}月分表示</button>
         </div>
         <hr>
 
@@ -121,7 +119,8 @@
        },
        data() {
            return {
-             dayData: ("00" + (new Date().getMonth() + 1)).slice(-2),
+             dayData: new Date().getFullYear()  + 
+                '-' + ("00" + (new Date().getMonth() + 1)).slice(-2),
              selectDayValue: ''
            }
        },
@@ -183,14 +182,14 @@
                 }).then(() => {
                     //record登録時、userに最新record登録日数を入れる
                         this.usersRef.doc(this.userProfile[0][0]).update({
-                            checkRecordDay: this.getPageData[0].value.day
+                            checkRecordDay: this.getPageData[0].value.day.slice(0, 10)
                         })
-                });
                 this.day = new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2) + 'T' + ("00" + (new Date().getHours())).slice(-2) + ':' + '00',
                 this.record = ''
                 this._uid = Math.floor( Math.random(this._uid) * 100 )
+                });
             },
             deleteRecord(recID) {
                  this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(() => {
@@ -201,8 +200,8 @@
             getRecord(i) {
                 //orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
                 //where('day' '>=' startDay)で日付が指定した月の1日以上ののもの, where('day', '<=' endDay)で日付が指定した月以下
-              var startDay = new Date().getFullYear() + '-' + ("00" + i).slice(-2) + '-01'
-              var endDay = new Date().getFullYear() + '-' + ("00" + i).slice(-2) + '-31'
+              var startDay = i + '-01'
+              var endDay = i + '-31'
 
               this.usersRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
                 const obj = {}

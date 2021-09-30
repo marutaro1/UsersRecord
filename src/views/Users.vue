@@ -31,6 +31,12 @@
         <div class="col-6 col-lg-3">
             <input type="date" v-model="checkDayKeyword" class="form-control">
         </div>
+        <div v-if="!changeValue">
+            <button @click="todayNotRegisteredRecord">{{day}}:記録未登録者</button>   
+        </div>
+        <div v-else>
+            <button @click="getUsers">戻す</button>   
+        </div>
         </div>
         <hr>
         <div class="scroll-user">       
@@ -48,7 +54,7 @@
                 <br>
                 要介護度:{{user.value.careLevel}}
                 <br>
-                最終記録入力日: {{user.value.checkRecordDay}}
+                最終記録登録日: {{user.value.checkRecordDay}}
                 </td>
             </table>
             <hr>
@@ -132,6 +138,21 @@
                    }
             }              
         },
+        methods:{
+            todayNotRegisteredRecord() {
+            this.changeValue = true
+            this.usersRef.where('checkRecordDay', 'not-in', [this.today]).onSnapshot(querySnapshot => {
+                const obj = {}
+                querySnapshot.forEach(doc => {
+                //querySnapshotが現在の全体のデータ
+                    obj[doc.id] = doc.data()
+                    //doc.idはランダムな文字列のid
+                })
+                this.users = obj
+            });
+
+            }
+        }
 
 
     };
