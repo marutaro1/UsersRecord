@@ -35,26 +35,21 @@
             </div>
          </div>
          <hr>
-         <label class="col-5 col-form-label">キーワード検索:</label>
-         <div class="col-6 mb-2">
-            <vue-simple-suggest
-            v-model="keyword"
-            :list="recordsKeyword"
-            :filter-by-query="true"
-            class="form-control m-0 p-0"
-            autocomplete="off">
-            </vue-simple-suggest>
-         </div>
+        
 
-         <label class="col-3 col-form-label">日付指定:</label>
+        <!-- 日付を指定し記録を抽出する機能を追加したため、↓の検索機能は要らなくなった -->
+        <!-- <div> 
+            <label class="col-3 col-form-label">日付指定:</label>
 
-         <div class="col-6 mb-2">
-            <input type="date" v-model="dayKeywordFirst" class="form-control">
-            <p class="m-0 p-0">から</p>
-            <input type="date" v-model="dayKeywordSecond" class="form-control">
-         </div>
-        <button @click="dayclearString" class="btn btn-primary px-1">クリア</button>
-        <hr>
+             <div class="col-6 mb-2">
+                <input type="date" v-model="dayKeywordFirst" class="form-control">
+                <p class="m-0 p-0">から</p>
+                <input type="date" v-model="dayKeywordSecond" class="form-control">
+             </div>
+            <button @click="dayclearString" class="btn btn-primary px-1 mx-1">クリア</button>
+        </div>
+        <hr> -->
+
         <div>
             <label lass="col-2 col-form-label">各月の記録抽出:</label>
             <div class="col-6 my-2">
@@ -62,15 +57,35 @@
             </div>
              <button @click="getRecord(selectDayValue)" class="btn btn-primary px-1">{{selectDayValue}}月分表示</button>
         </div>
+        <div>
+            <label class="col-3 col-form-label">日付指定記録抽出:</label>
+
+             <div class="col-6 mb-2">
+                <input type="date" v-model="dayKeywordFirst" class="form-control">
+                <p class="m-0 p-0">から</p>
+                <input type="date" v-model="dayKeywordSecond" class="form-control">
+             </div>
+            <button @click="getMonthsRecord" class="btn btn-primary px-1">検索</button>
+            <button @click="dayclearString" class="btn btn-primary px-1 mx-1">クリア</button>
+        </div>
+            
         <hr>
 
+        <div>
+            <label class="col-5 col-form-label">キーワード検索:</label>
+            <div class="col-6 mb-2">
+                <vue-simple-suggest
+                v-model="keyword"
+                :list="recordsKeyword"
+                :filter-by-query="true"
+                class="form-control m-0 p-0"
+                autocomplete="off">
+                </vue-simple-suggest>
+            </div>
+         </div>
+
          <div class="scroll">
-            <div v-if="!selectDayValue">
-                <p>{{dayData}}月の記録</p>
-            </div>
-            <div v-else>
-                <p>{{selectDayValue}}月の記録</p>
-            </div>
+           
                 <div v-for="(rec, key) in getPageData" :key="key">
                 
                 <p>{{rec.value.day}}</p>
@@ -138,14 +153,14 @@
                 return keywordData;
             },
             //日付指定追加
-            serchDay() {
+           /* serchDay() {
                 return this.reverseSortRecords.filter(rec => {
                             this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
                             var customIncludes = (arr, target) => arr.some(el => target.includes(el));
                             //独自関数
                             return customIncludes(this.arrayDayData, rec.value.day);
                 });
-            },
+            }, */
             //キーワード検索追加
             serchRecords() {
                 return this.reverseSortRecords.filter(rec => {
@@ -154,21 +169,21 @@
             },
             //ページカウント
             pageCount() {
-                 if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+                /* if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
                    return Math.ceil(this.serchDay.length / this.parPage)
-                 } else {
+                 } else { */
                    return Math.ceil(this.serchRecords.length / this.parPage)
-                 }
+                // }
            },
            //ページ機能追加
            getPageData() {
                var current = this.currentPage * this.parPage;
                var start = current - this.parPage
-               if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
+              /* if(!!this.dayKeywordFirst && !!this.dayKeywordSecond) {
                    return this.serchDay.slice(start, current)
-               } else {
+               } else { */
                    return this.serchRecords.slice(start, current)
-               }               
+               //}               
            },
         },
         methods: {
@@ -176,6 +191,7 @@
                 if(this.day === '' || this.record === ''){ return }
                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
                 day: this.day,
+                searchDay: this.day.slice(0, 10),//検索用の値 YYYY-MM-DDで登録
                 record: this.record,
                 recordID: uid,
                 staffName: this.displayStaffName
@@ -212,10 +228,26 @@
                 this.records = obj
               });
             },
+            getMonthsRecord() {
+
+                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).where('searchDay', '>=', this.dayKeywordFirst).where('searchDay', '<=', this.dayKeywordSecond).onSnapshot(querySnapshot => {
+                const obj = {}
+                querySnapshot.forEach(doc => {
+                //querySnapshotが現在の全体のデータ
+                    obj[doc.id] = doc.data()
+                })
+                console.log(this.dayKeywordFirst)
+                console.log(this.dayKeywordSecond)
+                console.log(this.obj)
+                this.records = obj
+                console.log(this.records)
+              });
+            },
             updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
+                searchDay: this.day.slice(0, 10),//検索用の値 YYYY-MM-DDで登録
                 record: this.newRecord,
                 staffName: this.displayStaffName
                 }).then(() => {
