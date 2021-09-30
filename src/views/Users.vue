@@ -27,15 +27,25 @@
                 <option value="10F">10F</option>
             </select>
         </div>
+        <label class="col-5 col-form-label">要介護度: </label>
+        <div class="col-6 col-lg-3">
+            <select v-model="keyword" class="form-select form-select-sm">
+                <option value="" selected="selected">選択してください</option>
+                <option value="自立">自立</option>
+                <option value="要">要支援・要介護</option>
+                <option value="要支援">要支援</option>
+                <option value="要介護">要介護</option>
+            </select>
+        </div>
         <label class="col-5 col-form-label">最終記録登録日: </label>
         <div class="col-6 col-lg-3">
             <input type="date" v-model="checkDayKeyword" class="form-control">
         </div>
         <div v-if="!changeValue">
-            <button @click="todayNotRegisteredRecord">{{day}}:記録未登録者</button>   
+            <button @click="todayNotRegisteredRecord" class="btn btn-warning mt-2">{{day}}:記録未登録者</button>   
         </div>
         <div v-else>
-            <button @click="getUsers">戻す</button>   
+            <button @click="getUsers" class="btn btn-primary mt-2">戻る</button>   
         </div>
         </div>
         <hr>
@@ -141,7 +151,7 @@
         methods:{
             todayNotRegisteredRecord() {
             this.changeValue = true
-            this.usersRef.where('checkRecordDay', 'not-in', [this.today]).onSnapshot(querySnapshot => {
+            this.usersRef.where('checkRecordDay', 'not-in', [this.todayData]).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ

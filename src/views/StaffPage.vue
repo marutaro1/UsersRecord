@@ -34,13 +34,14 @@
         </button>
         </p>
         <div>
-            <label>メモ:</label>
-            <textarea v-model="staffMemo"></textarea>
+            <label class="col-2 col-form-label">メモ:</label>
+            <div class="col-lg-5 col-8">
+                <textarea v-model="staffMemo" class="form-control"></textarea>
+            </div>
         </div>
-       <button @click="addWorkCheckChange(plofile.staffName)" class="mb-2 btn btn-primary">登録</button>
+       <button @click="addWorkCheckChange(plofile.staffName)" class="my-2 btn btn-primary">登録</button>
       
       </div>
-      <hr>
     </div>
 </template>
 <script>

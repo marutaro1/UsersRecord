@@ -10,9 +10,9 @@
                     <br>
                     生年月日: {{user[1].birthday}} &nbsp;
                     年齢: {{age(user[1].birthday)}}歳 &nbsp;
-                    
+            
                 </div>
-
+           
             <router-view :userName="user[1].name" :userBirthday="user[1].birthday"></router-view>
         </div>
     </div>
