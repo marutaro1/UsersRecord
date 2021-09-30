@@ -81,7 +81,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                 this.staffDatas = result
             },
             workCheckChange(i) {
-                if(this.workCheck[i] === '') {
+                if(!this.workCheck[i]) {
                    Vue.set(this.workCheck, i, '完了')
                     console.log(this.workCheck)
                 } else {
