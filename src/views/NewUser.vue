@@ -18,8 +18,6 @@
                 <option value="" selected="selected">選択してください</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
             </select>
         </div>
         <br>
@@ -60,8 +58,10 @@ export default {
              number: this.number + this.roomCheck,
              floor: parseInt(String(Number(this.number) / 100)) + 'F',
              checkRecordDay: ''
-             });
-            alert('新規登録しました');
+             }).then(() => {
+                alert('新規登録しました');
+
+             })
         },
     }
 };
