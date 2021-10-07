@@ -23,6 +23,7 @@
         </div>
         <hr>
         <div>
+        {{staffId}}
             <h4>更新用フォーム</h4>
             <label class="col-2 col-form-label">日付: </label>
             <div class="col-8 col-lg-3">
@@ -58,14 +59,14 @@
              <button @click="getRecord(selectDayValue)" class="btn btn-primary px-1">{{selectDayValue}}月分表示</button>
         </div>
         <div>
-            <label class="col-3 col-form-label">日付指定記録抽出:</label>
+            <label class="col-5 col-form-label">日付指定記録抽出:</label>
 
              <div class="col-6 mb-2">
                 <input type="date" v-model="dayKeywordFirst" class="form-control">
                 <p class="m-0 p-0">から</p>
                 <input type="date" v-model="dayKeywordSecond" class="form-control">
              </div>
-            <button @click="getMonthsRecord" class="btn btn-primary px-1">検索</button>
+            <button @click="getMonthsRecord" class="btn btn-primary px-1">{{dayKeywordFirst}}-{{dayKeywordSecond}}分表示</button>
             <button @click="dayclearString" class="btn btn-primary px-1 mx-1">クリア</button>
         </div>
             
@@ -85,6 +86,15 @@
          </div>
 
          <div class="scroll">
+         <div v-if="!!dayKeywordFirst && !!dayKeywordSecond">
+            <p>{{dayKeywordFirst}}から{{dayKeywordSecond}}までの記録</p>
+         </div>
+         <div v-else-if="!selectDayValue">
+            <p>{{dayData}}月の記録</p>
+         </div>
+         <div v-else>
+           <p>{{selectDayValue}}月の記録</p>
+         </div>
            
                 <div v-for="(rec, key) in getPageData" :key="key">
                 
@@ -139,6 +149,7 @@
              selectDayValue: ''
            }
        },
+      
         computed: {
          
             //serchRecordsからキーワード候補抽出
@@ -189,7 +200,7 @@
         methods: {
             addRecords(uid) {
                 if(this.day === '' || this.record === ''){ return }
-                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
+                this.recordRef.doc('users-record').collection(this.userProfile[0][0]).doc(String(uid)).set({
                 day: this.day,
                 searchDay: this.day.slice(0, 10),//検索用の値 YYYY-MM-DDで登録
                 record: this.record,
@@ -197,7 +208,7 @@
                 staffName: this.displayStaffName
                 }).then(() => {
                     //record登録時、userに最新record登録日数を入れる
-                        this.usersRef.doc(this.userProfile[0][0]).update({
+                        this.usersRef.doc('user').collection('user').doc(this.userProfile[0][0]).update({
                             checkRecordDay: this.getPageData[0].value.day.slice(0, 10)
                         })
                 this.day = new Date().getFullYear()  + 
@@ -208,29 +219,40 @@
                 });
             },
             deleteRecord(recID) {
-                 this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(() => {
+                 this.recordRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).delete().then(() => {
+                var dayData = '' //
+                if (this.getPageData[0]){ //recordがある場合にはrecordのdayが一番新しいものをcheckRecordDayに入れ込む
+                    dayData = this.getPageData[0].value.day.slice(0, 10)
+                } else { //recordがない場合には、空の文字列をcheckRecordDayに入れ込む
+                    dayData = ''
+                }
                  alert('削除しました')
-            
+                 this.usersRef.doc('user').collection('user').doc(this.userProfile[0][0]).update({
+                            checkRecordDay: dayData
+                        })
                  })
             },
+
             getRecord(i) {
                 //orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
                 //where('day' '>=' startDay)で日付が指定した月の1日以上ののもの, where('day', '<=' endDay)で日付が指定した月以下
               var startDay = i + '-01'
               var endDay = i + '-31'
 
-              this.usersRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
+              this.recordRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
                     obj[doc.id] = doc.data()
                 })
                 this.records = obj
-              });
+              })
+                this.dayKeywordFirst = ''
+                this.dayKeywordSecond = ''
             },
             getMonthsRecord() {
 
-                this.usersRef.doc('users-record').collection(this.userProfile[0][0]).where('searchDay', '>=', this.dayKeywordFirst).where('searchDay', '<=', this.dayKeywordSecond).onSnapshot(querySnapshot => {
+                this.recordRef.doc('users-record').collection(this.userProfile[0][0]).where('searchDay', '>=', this.dayKeywordFirst).where('searchDay', '<=', this.dayKeywordSecond).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
@@ -245,24 +267,24 @@
             },
             updateRecord(recID) {
                if(this.newDay === '' || this.newRecord === ''){ return }
-               this.usersRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
+               this.recordRef.doc('users-record').collection(this.userProfile[0][0]).doc(recID).update({
                 day: this.newDay,
                 searchDay: this.day.slice(0, 10),//検索用の値 YYYY-MM-DDで登録
                 record: this.newRecord,
                 staffName: this.displayStaffName
                 }).then(() => {
                     //record登録時、userに最新record登録日数を入れる
-                        this.usersRef.doc(this.userProfile[0][0]).update({
-                            checkRecordDay: this.getPageData[0].value.day
+                        this.usersRef.doc('user').collection('user').doc(this.userProfile[0][0]).update({
+                            checkRecordDay: this.getPageData[0].value.day.slice(0, 10)
                         })
-               alert('更新しました');
                this.newDay = ''
                this.newRecord = ''
                this.selectDayValue = ''
                 });
+               alert('更新しました');
             },
             addArchives(record) {
-               this.usersRef.doc('users-record').collection('archives').doc(this.id).set({
+               this.recordRef.doc('archive').collection('archives').doc(this.userProfile[0][0]).set({
                 userName: this.userName,
                 userNumber: this.id,
                 archive: record

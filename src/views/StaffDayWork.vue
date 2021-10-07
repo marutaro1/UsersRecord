@@ -13,7 +13,7 @@
             <option value="nurse">看護</option>
             <option value="rehabilitation">リハビリ</option>
             <option value="studentSupport">生活支援</option>
-        </select>
+        </select>   
         </div>
         <button @click="staffDataGet" class="mt-2 btn btn-warning">業務登録</button>
         <div v-if="staffOfficialPosition !== ''">
@@ -148,8 +148,8 @@ export default {
     },
     methods: {
         staffDataGet() {//staff達のデータを取得するメソッド
-            if(this.today === '' || this.departmentWorks === '') { return }
-            this.usersRef.doc('staffs').collection(this.departmentWorks).onSnapshot(querySnapshot => {
+            //if(this.today === '' || this.departmentWorks === '') { return }
+            this.staffRef.doc('staff').collection(this.departmentWorks).onSnapshot(querySnapshot => {
                       const obj = {}
                       querySnapshot.forEach(doc => {
                           obj[doc.id] = doc.data()
@@ -159,12 +159,12 @@ export default {
                     });
         },
         addDailyWork() {//部署ごとにfirestoreにdocumentを作り、その中のcollectionにその業務の曜日名をつけ、データを保存する
-            this.usersRef.doc('dailyWork-' + this.departmentWorks).collection(this.dailyWorkData.week).doc().set({
+            this.staffRef.doc('dailyWork-' + this.departmentWorks).collection(this.dailyWorkData.week).doc().set({
                 dailyWorkData: this.dailyWorkData.dailyWork
             })
         },
         getDailyWork() {//addDailyWorkで保存したデータを一気に取得し、dailyWorks(空のオブジェクト)に入れ込む
-            this.usersRef.doc('dailyWork-' + this.departmentWorks).collection(this.weekData).onSnapshot(querySnapshot => {
+            this.staffRef.doc('dailyWork-' + this.departmentWorks).collection(this.weekData).onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
                           obj[doc.id] = doc.data()
@@ -173,7 +173,7 @@ export default {
             });
         },
         addAllDailyWork() {//書き出したstaffのname/phs/workを、staffsのdocument→部署ごとのcollection→業務を行う日付のdocument内に登録する
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today).set({
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today).set({
                 checkStaffsPost: this.checkStaffsPost
             }).then(() => {
                 this.addDocStaffName()
@@ -183,7 +183,7 @@ export default {
         addDocStaffName() {
             var i = 0
             while(i < Number(this.dailyWorkAllData[this.today].checkStaffsPost.length)) {
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(this.dailyWorkAllData[this.today].checkStaffsPost[i].staffName).set({
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(this.dailyWorkAllData[this.today].checkStaffsPost[i].staffName).set({
                     workCheck: [''],
                     additionalWorkCheck: ['','',''],
                     staffMemo: '',
@@ -192,7 +192,7 @@ export default {
             }
         },
         getCompleteWork() {
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
                           if(String(doc.id) !== String(this.today + 'completeWork')) { return }
@@ -202,7 +202,7 @@ export default {
             });
         },
         getAllDailyWork() {//addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
                 var obj = {}
                     querySnapshot.forEach(doc => {
                         obj[doc.id] = doc.data()
@@ -210,7 +210,7 @@ export default {
                     console.log(obj)
                     this.staffCompleteWorkCheck = obj       
             });
-            this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
                           if(String(doc.id) !== String(this.today)) { return }

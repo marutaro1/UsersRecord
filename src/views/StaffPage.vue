@@ -99,7 +99,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                 }  
             },
             addWorkCheckChange(staffName) {
-                 this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(staffName).set({
+                 this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(staffName).set({
                    workCheck: this.workCheck,
                    additionalWorkCheck: this.additionalWorkCheck,
                    staffMemo: this.staffMemo
@@ -109,7 +109,7 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
                  )
             },
             getWorkCheckChange(staffName) {
-                 this.usersRef.doc('staffs').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+                 this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
                    const obj = {}
                       querySnapshot.forEach(doc => {
                           if(doc.id !== staffName) {return}

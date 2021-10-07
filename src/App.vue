@@ -37,6 +37,8 @@
           <li @click="logOut" class="btn btn-warning p-2">ログアウト</li>
         </ul>
       </nav>
+    ログイン中:{{displayStaffName}}
+    <br>
       <router-view class="container"></router-view>
     </div>
   </div>

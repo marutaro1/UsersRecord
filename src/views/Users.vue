@@ -27,6 +27,7 @@
                 <option value="10F">10F</option>
             </select>
         </div>
+        
         <label class="col-5 col-form-label">要介護度: </label>
         <div class="col-6 col-lg-3">
             <select v-model="keyword" class="form-select form-select-sm">
@@ -42,7 +43,7 @@
             <input type="date" v-model="checkDayKeyword" class="form-control">
         </div>
         <div v-if="!changeValue">
-            <button @click="todayNotRegisteredRecord" class="btn btn-warning mt-2">{{day}}:記録未登録者</button>   
+            <button @click="todayNotRegisteredRecord" class="btn btn-warning mt-2">{{todayData}} 記録未登録者</button>   
         </div>
         <div v-else>
             <button @click="getUsers" class="btn btn-primary mt-2">戻る</button>   
@@ -102,7 +103,7 @@
         },
         data() {
             return {
-                checkDayKeyword: ''//最終記録登録日確認のためのキーワード
+                checkDayKeyword: '',//最終記録登録日確認のためのキーワード
             }
         },
         computed: {
@@ -118,6 +119,8 @@
                     return String(user.value.checkRecordDay).includes(this.checkDayKeyword)
                 });
             },
+
+
             //serchUsersからキーワード候補抽出
             usersKeyword() {
                 var keywordData = []
@@ -142,7 +145,7 @@
                var current = this.currentPage * this.parPage;
                var start = current - this.parPage
                    if(this.checkDayKeyword) {
-                    return this.serchCheckDay.slice(start, current)
+                   return this.serchCheckDay.slice(start, current)
                    } else {//checkDayKeywordがfalseならserchUsersの値を表示
                     return this.serchUsers.slice(start, current)
                    }
@@ -150,8 +153,8 @@
         },
         methods:{
             todayNotRegisteredRecord() {
-            this.changeValue = true
-            this.usersRef.where('checkRecordDay', 'not-in', [this.todayData]).onSnapshot(querySnapshot => {
+            this.changeValue = true 
+            this.usersRef.doc('user').collection('user').where('checkRecordDay', 'not-in', [this.todayData]).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ

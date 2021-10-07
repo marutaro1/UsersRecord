@@ -1,5 +1,5 @@
 <template>
-    <div>    
+    <div>
         <h2 class="mt-2">職員登録画面</h2>
         <div>
             <label class="col-4 col-form-label">新規職員名:</label>
@@ -8,7 +8,7 @@
             </div>
             <br>
             <label class="col-4 col-form-label">部署:</label>
-            <div class="col-4 col-lg-2">
+            <div class="col-6 col-lg-2">
                 <select v-model="department" class="form-select form-select-sm">
                     <option value="">選択してください</option>
                     <option value="caregiver">介護</option>
@@ -19,7 +19,7 @@
             </div>
             <br>
             <label class="col-4 col-form-label">役職:</label>
-            <div class="col-4 col-lg-2">
+            <div class="col-6 col-lg-2">
                 <select v-model="officialPosition" class="form-select form-select-sm">
                     <option value="" selected="selected">選択してください</option>
                     <option value="leader">リーダー</option>
@@ -55,38 +55,9 @@
 </template>
 <script>
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
-import firebase from 'firebase';
 export default {
     mixins: [MixinUsersRecord],
-    methods: {
-        signUp() {
-            if(this.staffName === '' || this.email === '' || this.password === ''){ return }
-            firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-            .then(res => {
-                console.log(res.user);
-                console.log(res.user.uid);
-                this.staffNameAdd(res.user.uid);
-            });
-            alert('登録しました');
-            this.$router.push('/');
-        },
-        staffNameAdd(staffID) {
-              this.usersRef.doc('staffs').collection(staffID).doc(staffID).set({
-                staffName: this.staffName,
-                email: this.email,
-                password: this.password,
-                }).then(res => {
-                    console.log(res);
-                    this.staffDepartment(this.department, staffID);
-                });
-        },
-        staffDepartment(department, staffID) {
-              this.usersRef.doc('staffs').collection(department).doc(staffID).set({
-                staffName: this.staffName,
-                department: this.department,
-                officialPosition: this.officialPosition,
-                });
-        }
-    }
+   
+        
 };
 </script>

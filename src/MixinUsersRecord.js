@@ -5,6 +5,8 @@ import firebase from 'firebase';
             return {
                 db: null,
                 userRef: null,
+                recordRef: null,
+                staffRef: null,
                 name: '',
                 number: '',
                 careLevel: '',
@@ -28,18 +30,23 @@ import firebase from 'firebase';
                 currentPage: 1,
                 staffs: {},
                 staffName: '',
+                staffId: '',
                 staffKey: '',
                 displayStaffName: '',
                 staffOfficialPosition: '',//ログインしたstaffのoffitialPositionを格納する値
                 archives: {},
                 authentication: '',
                 manuel: '',
+                manuelTitle: '',
                 history: '',
                 keyword: '',
                 dayKeywordFirst: '',
                 dayKeywordSecond: '',
                 email: '',
                 password: '',
+                createStaffName: '',
+                createEmail: '',
+                createPassword: '',
                 department: '',
                 officialPosition: '',
                 changeValue: false,//root pathで記録未登録者ボタンと切り替えるための値
@@ -48,16 +55,18 @@ import firebase from 'firebase';
         created() {
             this.db = firebase.firestore()
             this.usersRef = this.db.collection('users')
+            this.recordRef = this.db.collection('users-record')
+            this.staffRef = this.db.collection('staffs')
             this.getUsers()
-          
+           
+            
             this._uid = Math.floor( Math.random(this._uid) * 100);
         },
         mounted() {
             firebase.auth().onAuthStateChanged(staff => {
                 if(staff) {
                     this.authentication = true;
-                    this.staffNameSeek(staff.uid);
-                    
+                    this.staffNameSeek(staff.uid)
                     
                 } else {
                     this.authentication = false;
@@ -112,7 +121,7 @@ import firebase from 'firebase';
         methods: {
             getUsers() {//user達のデータを取得する
                 this.changeValue = false
-                this.usersRef.onSnapshot(querySnapshot => {
+                this.usersRef.doc('user').collection('user').onSnapshot(querySnapshot => {
                     const obj = {}
                     querySnapshot.forEach(doc => {
                     //querySnapshotが現在の全体のデータ
@@ -122,6 +131,20 @@ import firebase from 'firebase';
                     this.users = obj
                 });
             },
+           
+            // getUsers() {//user達のデータを取得する
+            //     this.changeValue = false
+            //     this.usersRef.onSnapshot(querySnapshot => {
+            //         const obj = {}
+            //         querySnapshot.forEach(doc => {
+            //         //querySnapshotが現在の全体のデータ
+            //             obj[doc.id] = doc.data()
+            //             //doc.idはランダムな文字列のid
+            //         })
+            //         this.users = obj
+            //     });
+            // },
+           
             objectUsers() {
                 var arr = Object.entries(this.users)
                 var result = arr.filter((value) => {
@@ -133,7 +156,7 @@ import firebase from 'firebase';
             },
             doLogin() {
                 firebase.auth().signInWithEmailAndPassword(this.email, this.password)
-                .then(() => this.$router.push("/"), alert('ログインしました'))
+                .then(()=> this.$router.push("/"), alert('ログインしました'))
                 .catch((e) => (this.error = e.message));
             },
             logOut() {
@@ -142,18 +165,44 @@ import firebase from 'firebase';
                 this.$router.go('/')
             },
             
-            staffNameSeek(staffID) {
-                this.usersRef.doc('staffs').collection(staffID).onSnapshot(querySnapshot => {
-                    const obj = {}
-                    querySnapshot.forEach(doc => {
-                        //querySnapshotが現在の全体のデータ
-                        obj[doc.id] = doc.data()
-                    })
-                    this.staffs = obj;
-                    this.staffKey = staffID
-                    this.displayStaffName = this.staffs[staffID].staffName;
-                });
-            },
+            //<------------------------- SignUp.vue ---------------------------->
+            staffNameSeek(staffID) {//ログインしているstaffの名前を取得する 
+                    this.staffRef.doc('staff').collection(staffID).onSnapshot(querySnapshot => {
+                        const obj = {}
+                        querySnapshot.forEach(doc => {
+                            //querySnapshotが現在の全体のデータ
+                            obj[doc.id] = doc.data()
+                        })
+                        this.staffs = obj
+                        this.staffKey = staffID
+                        this.displayStaffName = this.staffs[staffID].staffName
+                    });
+                },
+                signUp() {
+                    //if(this.staffName === '' || this.email === '' || this.password === ''){ return }
+                    firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+                    .then(res => {
+                        this.staffNameAdd(res.user.uid)
+                    });
+                    alert('登録しました ※注意:現在、新しく登録した職員で自動的にログインしています')
+                },
+                staffNameAdd(staffID) {
+                      this.staffRef.doc('staff').collection(staffID).doc(staffID).set({
+                        staffName: this.staffName,
+                        email: this.email,
+                        password: this.password,
+                        }).then(() => {
+                            this.staffDepartment(this.department, staffID);
+                        });
+                },
+                staffDepartment(department, staffID) {
+                      this.staffRef.doc('staff').collection(department).doc(staffID).set({
+                        staffName: this.staffName,
+                        department: this.department,
+                        officialPosition: this.officialPosition,
+                        });
+                },
+            //<------------------------------------------------------------------>
             //day取得メソッド
             getDay(start, end) {
                 var dayData = []
@@ -196,16 +245,7 @@ import firebase from 'firebase';
                     const result = arr.map(([key, value]) => ({key, value}))
                     this.records = result
                  },
-                 getRecordTest(key) {//RecordCheckでuserごとのrecord取得用
-                    this.usersRef.doc('users-record').collection(key).onSnapshot(querySnapshot => {
-                      const obj = {}
-                      querySnapshot.forEach(doc => {
-                      //querySnapshotが現在の全体のデータ
-                          obj[doc.id] = doc.data()
-                      })
-                      this.records = obj
-                    });
-                  },
+               
                 //<--------------------------------------------------------------->
             }
         };

@@ -78,7 +78,7 @@ import VuejsPaginate from 'vuejs-paginate';
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'
 export default {
-    props: ['id'],
+    props: ['id', 'userName'],
     mixins: [MixinUsersRecord],
     data() {
      return {
@@ -158,18 +158,19 @@ export default {
         },
         addHistory(uid) {
             if(this.history === ''){ return }
-                this.usersRef.doc('history').collection(this.userProfile[0][0]).doc(String(uid)).set({
+                this.usersRef.doc('user').collection('user').doc(this.userName).collection('medical-history').doc(String(uid)).set({
                     dateOfOnset: this.dateOfOnset,
                     history: this.history,
                     historyID: uid
-                });
+                }).then(() =>{
+                    this.history = ""
+                    this.dateOfOnset = ""
+                    this._uid = Math.floor( Math.random(this._uid) * 100 )
+                })
             alert('追加しました')
-            this.history = ""
-            this.dateOfOnset = ""
-            this._uid = Math.floor( Math.random(this._uid) * 100 )
         },
         getHistory() {
-              this.usersRef.doc('history').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+            this.usersRef.doc('user').collection('user').doc(this.userName).collection('medical-history').onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                     obj[doc.id] = doc.data()
@@ -178,18 +179,19 @@ export default {
               })
              
         },
-        updateHistory(hisID) {
-             if(this.newHistory === ''){ return }
-            this.usersRef.doc('history').collection(this.userProfile[0][0]).doc(String(hisID)).update({
-                day: this.newDateOfOnset,
+        updateHistory(uid) {
+             if(this.newHistory === '' || this.newDateOfOnset === ''){ return }
+            this.usersRef.doc('user').collection('user').doc(this.userName).collection('medical-history').doc(String(uid)).update({
+                dateOfOnset: this.newDateOfOnset,
                 history: this.newHistory
-            });
+            }).then(() => {
+                this.newDateOfOnset = ''
+                this.newHistory = ''    
+            })
             alert('更新しました')
-            this.newDateOfOnset = ''
-            this.newHistory = ''
         },
-        deleteHistory(historyID) {
-                 this.usersRef.doc('history').collection(this.userProfile[0][0]).doc(String(historyID)).delete();
+        deleteHistory(uid) {
+                 this.usersRef.doc('user').collection('user').doc(this.userName).collection('medical-history').doc(String(uid)).delete();
                  alert('削除しました')
         },
        

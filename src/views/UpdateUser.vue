@@ -56,14 +56,15 @@
         methods: {
              updateProfile() {
                 if(this.newNumber === ''|| this.newCareLevel === ''){ return }
-                this.usersRef.doc(this.userProfile[0][0]).update({
-                name: this.userName,
-                birthday: this.userBirthday,
-                careLevel: this.newCareLevel,
-                number: this.newNumber + this.newRoomCheck,
-              });
-              this.$router.push('/');
-              alert('更新しました');
+                    this.usersRef.doc('user').collection('user').doc(this.userName).update({
+                    name: this.userName,
+                    birthday: this.userBirthday,
+                    careLevel: this.newCareLevel,
+                    number: this.newNumber + this.newRoomCheck,
+                }).then(() => {
+                    this.$router.push('/');
+                })
+                    alert('更新しました');
              }
         }
         

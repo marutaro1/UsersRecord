@@ -61,7 +61,7 @@ import VuejsPaginate from 'vuejs-paginate';
 import VueSimpleSuggest from 'vue-simple-suggest';
 import 'vue-simple-suggest/dist/styles.css'
 export default {
-    props: ['id'],
+    props: ['id', 'userName'],
     mixins: [MixinUsersRecord],
     data() {
      return {
@@ -114,16 +114,17 @@ export default {
          },
         addManuel(uid) {
             if(this.manuel === ''){ return }
-                this.usersRef.doc('manuel').collection(this.userProfile[0][0]).doc(String(uid)).set({
+                this.usersRef.doc('user').collection('user').doc(this.userName).collection('manuel').doc(String(uid)).set({
                     manuel: this.manuel,
                     manuelID: uid
-                });
+                }).then(() => {
+                    this.manuel = ""
+                    this._uid = Math.floor( Math.random(this._uid) * 100 )
+                })
             alert('追加しました')
-            this.manuel = ""
-            this._uid = Math.floor( Math.random(this._uid) * 100 )
         },
         getManuel() {
-              this.usersRef.doc('manuel').collection(this.userProfile[0][0]).onSnapshot(querySnapshot => {
+             this.usersRef.doc('user').collection('user').doc(this.userName).collection('manuel').onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                     obj[doc.id] = doc.data()
@@ -131,16 +132,17 @@ export default {
                 this.manuelPost = obj
               })
         },
-        updateManuel(manuelID) {
+        updateManuel(uid) {
              if(this.newManuel === ''){ return }
-            this.usersRef.doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).update({
+             this.usersRef.doc('user').collection('user').doc(this.userName).collection('manuel').doc(String(uid)).update({
                 manuel: this.newManuel
-            });
+            }).then(() => {
+                this.newManuel = ''
+            })
             alert('更新しました')
-            this.newManuel = ''
         },
-        deleteManuel(manuelID) {
-            this.usersRef.doc('manuel').collection(this.userProfile[0][0]).doc(String(manuelID)).delete();
+        deleteManuel(uid) {
+            this.usersRef.doc('user').collection('user').doc(this.userName).collection('manuel').doc(String(uid)).delete()
             alert('削除しました')
         },
          //ページをクリックした際の数字変化メソッド

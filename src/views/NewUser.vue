@@ -51,7 +51,7 @@ export default {
     methods: {
         addUser() {
             if(this.name === '' || this.number === '' || this.careLevel === '' || this.birthday === ''){ return }
-            this.usersRef.add({
+            this.usersRef.doc('user').collection('user').doc(this.name).set({
              name: this.name,
              birthday: this.birthday,
              careLevel: this.careLevel,

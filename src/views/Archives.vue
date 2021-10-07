@@ -11,8 +11,8 @@
         <p>部屋番号: {{parseInt(rec.userNumber / 10)}}</p>
         <p>名前:<router-link :to="'/User/' + rec.userNumber + '/Records'">{{rec.userName}}</router-link>様</p>
         <p style="white-space:pre-wrap; word-wrap:break-word;">記録: {{rec.archive}}</p>
-        <button @click="updateArchive(rec.userNumber)" class="btn btn-primary mt-1">更新</button>
-        <button @click="deleteRecord(rec.userNumber)" class="btn btn-primary mt-1 mx-1">まとめから削除</button>
+        <button @click="updateArchive(rec.userName)" class="btn btn-primary mt-1">更新</button>
+        <button @click="deleteRecord(rec.userName)" class="btn btn-primary mt-1 mx-1">まとめから削除</button>
         <hr>
       </div>
     </div>
@@ -30,7 +30,7 @@
     },
     methods: {
       getArchives() {
-         this.usersRef.doc('users-record').collection('archives').orderBy('userNumber', 'desc').onSnapshot(querySnapshot => {
+         this.recordRef.doc('archive').collection('archives').orderBy('userNumber').onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
@@ -39,17 +39,18 @@
                 this.archivesPost = obj
               });
       },
-      updateArchive(No) {
+      updateArchive(name) {
         if(this.newArchive === ''){ return }
-         this.usersRef.doc('users-record').collection('archives').doc(No).update({
+         this.recordRef.doc('archive').collection('archives').doc(name).update({
              archive: this.newArchive
-         });
-         alert('更新しました。');
-         this.newArchive = '';
+         }).then(() => {
+          this.newArchive = '';
+         })
+        alert('更新しました。');
      },
-     deleteRecord(No) {
-      this.usersRef.doc('users-record').collection('archives').doc(No).delete();     
-      alert('記録まとめから外しました。');
+     deleteRecord(name) {
+      this.recordRef.doc('archive').collection('archives').doc(name).delete()
+      alert('記録まとめから外しました。')
      }
     }
   };
