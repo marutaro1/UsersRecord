@@ -12,7 +12,7 @@
         <p>名前:<router-link :to="'/User/' + rec.userNumber + '/Records'">{{rec.userName}}</router-link>様</p>
         <p style="white-space:pre-wrap; word-wrap:break-word;">記録: {{rec.archive}}</p>
         <button @click="updateArchive(rec.userName)" class="btn btn-primary mt-1">更新</button>
-        <button @click="deleteRecord(rec.userName)" class="btn btn-primary mt-1 mx-1">まとめから削除</button>
+        <button @click="deleteArchive(rec.userName)" class="btn btn-primary mt-1 mx-1">まとめから削除</button>
         <hr>
       </div>
     </div>
@@ -48,7 +48,7 @@
          })
         alert('更新しました。');
      },
-     deleteRecord(name) {
+     deleteArchive(name) {
       this.recordRef.doc('archive').collection('archives').doc(name).delete()
       alert('記録まとめから外しました。')
      }

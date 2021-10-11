@@ -9,6 +9,7 @@ const UpdateUser = () => import(/* webpackChunkName: "UpdateUser" */ './views/Up
 const Archives = () => import(/* webpackChunkName: "Archives" */ './views/Archives.vue');
 const Manuel = () => import(/* webpackChunkName: "Manuel" */ './views/Manuel.vue');
 const MedicalHistory = () => import(/* webpackChunkName: "MedicalHistory" */ './views/MedicalHistory.vue');
+const Treatment = () => import(/* webpackChunkName: "Treatment" */ './views/Treatment.vue');
 const SignUp = () => import(/* webpackChunkName: "SignUp" */ './views/SignUp.vue');
 const StaffDayWork = () => import(/* webpackChunkName: "StaffDayWork" */ './views/StaffDayWork.vue');
 const Works = () => import(/* webpackChunkName: "Works" */ './views/Works.vue');
@@ -47,7 +48,8 @@ export default new Router({
             {path: '/User/:id/UpdateUser', component: UpdateUser, props: true},
             {path: '/User/:id/Records', component: Records, props: true},
             {path: '/User/:id/Manuel', component: Manuel, props: true},
-            {path: '/User/:id/MedicalHistory', component: MedicalHistory, props: true}
+            {path: '/User/:id/MedicalHistory', component: MedicalHistory, props: true},
+            {path: '/User/:id/Treatment', component: Treatment, props: true}
         ]
         },
         {path: '/Archives', component: Archives, props: true},

@@ -38,6 +38,7 @@ import firebase from 'firebase';
                 authentication: '',
                 manuel: '',
                 manuelTitle: '',
+                treatment: '',
                 history: '',
                 keyword: '',
                 dayKeywordFirst: '',
@@ -59,7 +60,7 @@ import firebase from 'firebase';
             this.staffRef = this.db.collection('staffs')
             this.getUsers()
            
-            
+    
             this._uid = Math.floor( Math.random(this._uid) * 100);
         },
         mounted() {
@@ -179,7 +180,7 @@ import firebase from 'firebase';
                     });
                 },
                 signUp() {
-                    //if(this.staffName === '' || this.email === '' || this.password === ''){ return }
+                    if(this.staffName === '' || this.email === '' || this.password === ''){ return }
                     firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
                     .then(res => {
                         this.staffNameAdd(res.user.uid)
@@ -192,11 +193,11 @@ import firebase from 'firebase';
                         email: this.email,
                         password: this.password,
                         }).then(() => {
-                            this.staffDepartment(this.department, staffID);
+                            this.staffDepartment(staffID);
                         });
                 },
-                staffDepartment(department, staffID) {
-                      this.staffRef.doc('staff').collection(department).doc(staffID).set({
+                staffDepartment(staffID) {
+                      this.staffRef.doc('staff').collection(this.department).doc(staffID).set({
                         staffName: this.staffName,
                         department: this.department,
                         officialPosition: this.officialPosition,
@@ -234,6 +235,7 @@ import firebase from 'firebase';
                 //<------------------------- User.vue ---------------------------->
                 usersList() {
                     const arr = Object.entries(this.users)
+                    //Object.entriesは引数に与えたオブジェクトが所有する、文字列をキーとした列挙可能なプロパティの組 [key, value] からなる配列を返す
                     const result = arr.map(([key, value]) => ({key, value}))
                     this.users = result
                 },   

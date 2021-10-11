@@ -240,7 +240,7 @@
               var endDay = i + '-31'
 
               this.recordRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
-                const obj = {}
+                var obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
                     obj[doc.id] = doc.data()

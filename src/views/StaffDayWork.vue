@@ -90,6 +90,7 @@
                 </div>
             
                 <button v-if="!limitOver" @click="addStaffData" class="my-3 btn btn-primary">職員追加</button>
+                <hr>
             </div>
             <button @click="addAllDailyWork" class="btn btn-warning">{{today}}:業務登録</button>
         </div>
@@ -97,7 +98,7 @@
         <button @click="getAllDailyWork" class=" mb-2 btn btn-primary">{{today}}:業務表示</button>
        
         <br>
-        <router-view :dailyWorkAllData="this.dailyWorkAllData" :departmentWorks="this.departmentWorks" :today="this.today" :completeWorkGetData="this.completeWorkGetData" :staffCompleteWorkCheck="this.staffCompleteWorkCheck"></router-view>
+        <router-view :dailyWorkAllData="this.dailyWorkAllData" :departmentWorks="this.departmentWorks" :today="this.today" :staffCompleteWorkCheck="this.staffCompleteWorkCheck"></router-view>
         
     </div>
 </template>
@@ -123,14 +124,12 @@ export default {
                 additionalWorkTwo: '',
                 additionalWorkThree: '',
             }],//staffDatasの中のstaffNameを格納している配列
-            completeWorkGetData: {},
             dailyWorkAllData: {},//staffと業務を書き出し当路kすいたすべてのデータを格納するオブジェクト
             staffCompleteWorkCheck: {
                 workCheck: [''],
                 additionalWorkCheck: ['','',''],
                 staffMemo: '',
             },
-            count: 1,
             limit: 10,
             today: new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
@@ -148,7 +147,7 @@ export default {
     },
     methods: {
         staffDataGet() {//staff達のデータを取得するメソッド
-            //if(this.today === '' || this.departmentWorks === '') { return }
+            if(this.today === '' || this.departmentWorks === '') { return }
             this.staffRef.doc('staff').collection(this.departmentWorks).onSnapshot(querySnapshot => {
                       const obj = {}
                       querySnapshot.forEach(doc => {
@@ -156,6 +155,7 @@ export default {
                       });
                       this.staffDatas = obj
                       this.staffOfficialPosition = this.staffDatas[this.staffKey].officialPosition
+                      console.log(this.staffDatas)
                     });
         },
         addDailyWork() {//部署ごとにfirestoreにdocumentを作り、その中のcollectionにその業務の曜日名をつけ、データを保存する
@@ -177,7 +177,7 @@ export default {
                 checkStaffsPost: this.checkStaffsPost
             }).then(() => {
                 this.addDocStaffName()
-                this.getCompleteWork()
+                
             })
         },
         addDocStaffName() {
@@ -191,16 +191,7 @@ export default {
                 i++
             }
         },
-        getCompleteWork() {
-            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
-                   const obj = {}
-                      querySnapshot.forEach(doc => {
-                          if(String(doc.id) !== String(this.today + 'completeWork')) { return }
-                          obj[doc.id] = doc.data()
-                      });
-                      this.completeWorkGetData = obj
-            });
-        },
+       
         getAllDailyWork() {//addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
             this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
                 var obj = {}
@@ -225,11 +216,10 @@ export default {
         },
         addStaffData() {//登録するためのstaffのデータを追加するためのメソッド
             this.checkStaffsPost.push(this.independentObject())
-            this.count++
+            console.log(this.limitOver)
         },
         removeStaffData(target) {//addStaffDataで追加したデータを削除するためのメソッド
             this.checkStaffsPost.splice(target, 1)
-            this.count--
         },
         independentObject() {
             return {

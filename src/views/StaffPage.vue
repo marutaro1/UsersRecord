@@ -1,5 +1,5 @@
 <template>
-    <div @mousemove.once="objectStaff">
+    <div>
       <h3>業務編集</h3>
       <router-link to="/StaffDayWork/Works" class="btn btn-primary p-1">戻る</router-link>
       <div v-for="(plofile, key) in staffPlofile" :key="key">
@@ -48,7 +48,7 @@
 import Vue from 'vue'
 import { MixinUsersRecord } from '@/MixinUsersRecord.js';
     export default {
-        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks', 'completeWorkGetData', 'staffCompleteWorkCheck'],
+        props: ['id', 'today', 'dailyWorkAllData', 'departmentWorks', 'staffCompleteWorkCheck'],
         mixins: [MixinUsersRecord],
         data() {
             return {
@@ -62,10 +62,6 @@ import { MixinUsersRecord } from '@/MixinUsersRecord.js';
             staffPlofile() {
                 this.objectStaff()
                 return this.staffDatas
-            },
-            getCompleteWorkDataList() {
-                this.getWorkDataList()
-                return this.completeWorkGetData
             },
         },
         methods: {
