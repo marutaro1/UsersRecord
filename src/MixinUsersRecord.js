@@ -19,6 +19,9 @@ import firebase from 'firebase';
                 todayData: new Date().getFullYear()  + 
                 '-' +("00" + (new Date().getMonth() + 1)).slice(-2) + '-' + 
 				("00" + (new Date().getDate())).slice(-2),
+                dayData: new Date().getFullYear()  + 
+                '-' + ("00" + (new Date().getMonth() + 1)).slice(-2),
+                selectDayValue: '',//各月の記録をgetするときに、input type='month'から月のデータを入れ、それを引数として渡すための値
                 arrayDayData: [],
                 record: '',
                 records: {},

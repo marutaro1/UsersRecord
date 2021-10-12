@@ -23,11 +23,12 @@
                     <option v-for="(t, key) in treatmentPost" :key="key" :value="t.treatmentID">{{t.treatment}}</option>
                 </select>
                 </div> 
-                <label class="col-form-label col-5">変更内容:</label>
+                <label class="col-form-label col-5">新しい内容:</label>
                 <div class="col-10 col-lg-6">
                     <textarea v-model="newTreatment" class="form-control"></textarea>
                 </div>
                 <button @click="updateSelectTreatment(updateTreatment)" class="btn btn-primary mt-1 py-0 px-1">内容更新</button>
+                <button @click="deleteSelectTreatment(updateTreatment)" class="btn btn-primary mt-1 py-0 px-1 mx-1">内容削除</button>
             </div>
     
             <div v-else>
@@ -58,11 +59,24 @@
             class="form-control m-0 p-0">
             </vue-simple-suggest>
          </div>
-         <hr>       
-        <div class="col-12 scroll" @mousemove.once="getTreatment">
+        <div>
+            <label lass="col-2 col-form-label">各月の記録抽出:</label>
+            <div class="col-6 my-2">
+                <input type="month" v-model="selectDayValue" class="form-control">
+            </div>
+             <button @click="getTreatment(selectDayValue)" class="btn btn-primary px-1">{{selectDayValue}}月分表示</button>
+        </div>
+         <hr>
+          <div v-if="!selectDayValue">
+            <h5>{{dayData}}月の記録</h5>
+         </div>
+         <div v-else>
+           <h5>{{selectDayValue}}月の記録</h5>
+         </div>     
+        <div class="col-12 scroll" @mousemove.once="getTreatment(dayData)">
             <div v-for="(selectT, key) in getTreatmentPageData" :key="key">
-                <p>日付:{{selectT.value.day}}</p>
-                <p>内容:{{selectT.value.selectTreatment}}</p>
+                <p>{{selectT.value.day}}</p>
+                <p>{{selectT.value.selectTreatment}}</p>
                 <p>登録者:{{selectT.value.displayStaffName}}</p>
                 <button @click="deleteTreatment(selectT.value.selectTreatmentID)" class="btn btn-primary mt-2">削除</button>
                 <hr>
@@ -120,7 +134,7 @@ export default {
             var number = this.treatmentLists.length
             var i = 0
             while (i < number) {
-                keywordData = [...keywordData, this.treatmentLists[i].value.treatment]
+                keywordData = [...keywordData, this.treatmentLists[i].value.selectTreatment]
                 i++
             }
             return keywordData;
@@ -180,6 +194,8 @@ export default {
                 this.treatmentPost = obj
               })
         },
+
+
         updateSelectTreatment(uid) {
              this.recordRef.doc('treatment').collection('treatments').doc(String(uid)).update({
                     treatment: this.newTreatment,
@@ -189,6 +205,10 @@ export default {
                     this._uid = Math.floor( Math.random(this._uid) * 100 )
                 })
             alert('追加しました')
+        },
+        deleteSelectTreatment(uid) {
+            this.recordRef.doc('treatment').collection('treatments').doc(String(uid)).delete()
+            alert('削除しました')
         },
         addTreatment(uid) {//getSelectTreatmentで取得した値をひとつ選択し、その日の処置記録として登録するメソッド
             if(this.selectTreatment === ''){ return }
@@ -203,8 +223,10 @@ export default {
                 })
             alert('追加しました')
         },
-        getTreatment() {
-             this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatmentList').onSnapshot(querySnapshot => {
+        getTreatment(i) {
+             var startDay = i + '-01'
+             var endDay = i + '-31'
+             this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatmentList').where('day', '>=', startDay).where('day', '<=', endDay).limit(150).onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                     obj[doc.id] = doc.data()

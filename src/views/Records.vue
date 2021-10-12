@@ -1,9 +1,10 @@
 <template>
     <div @mousemove.once="getRecord(dayData)">
 
-        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary">利用者情報更新</router-link>
-        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1">マニュアル</router-link>
-        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary">既往歴</router-link>
+        <router-link :to="'/User/' + id + '/UpdateUser'" class="btn btn-primary px-1" style="font-size: 14px;">利用者情報更新</router-link>
+        <router-link :to="'/User/' + id + '/Manuel'" class="btn btn-primary mx-1 px-1" style="font-size: 14px;">マニュアル</router-link>
+        <router-link :to="'/User/' + id + '/MedicalHistory'" class="btn btn-primary px-1" style="font-size: 14px;">既往歴</router-link>
+        <router-link :to="'/User/' + id + '/Treatment'" class="btn btn-primary mx-1 px-1" style="font-size: 14px;">処置入力</router-link>
         <hr>
         <h3>記録</h3>
         <div class="m-0">
@@ -87,13 +88,13 @@
 
          <div class="scroll">
          <div v-if="!!dayKeywordFirst && !!dayKeywordSecond">
-            <p>{{dayKeywordFirst}}から{{dayKeywordSecond}}までの記録</p>
+            <h5>{{dayKeywordFirst}}から{{dayKeywordSecond}}までの記録</h5>
          </div>
          <div v-else-if="!selectDayValue">
-            <p>{{dayData}}月の記録</p>
+            <h5>{{dayData}}月の記録</h5>
          </div>
          <div v-else>
-           <p>{{selectDayValue}}月の記録</p>
+           <h5>{{selectDayValue}}月の記録</h5>
          </div>
            
                 <div v-for="(rec, key) in getPageData" :key="key">
@@ -142,14 +143,6 @@
            'vuejs-paginate': VuejsPaginate,
            'vue-simple-suggest': VueSimpleSuggest,
        },
-       data() {
-           return {
-             dayData: new Date().getFullYear()  + 
-                '-' + ("00" + (new Date().getMonth() + 1)).slice(-2),
-             selectDayValue: ''
-           }
-       },
-      
         computed: {
          
             //serchRecordsからキーワード候補抽出
