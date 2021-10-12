@@ -1,32 +1,53 @@
 <template>
-    <div @mousemove.once="getTreatment">
+    <div @mousemove.once="getSelectTreatment">
         <router-link :to="'/user/' + id + '/Records'" class="btn btn-primary">記録へ戻る</router-link>
         <hr>
-        <h3>マニュアル一覧</h3> 
+        <h3>処置一覧</h3> 
         <div class="col-12">
+            <div v-if="defaultBoolean">
+                <button @click="inversionBoolean" class="btn btn-warning m-0 py-0 px-1">閉じる</button>
+                <br>
+                <label class="col-form-label col-5 mt-2">1:新規処置記録追加</label> 
+                <div class="col-10 col-lg-6">
+                    <textarea v-model="treatment" class="form-control"></textarea>
+                </div>
+                <button @click="addSelectTreatment(_uid)" class="btn btn-primary mt-1 py-0 px-1">追加</button>
+
+                <br>
+
+                <label class="col-form-label col-5">2:既存業務更新</label>
+                <div class="col-10 col-lg-3">
+                <label class="col-form-label col-5">元の内容:</label>
+                <select class="form-control py-0 px-1" v-model="updateTreatment">
+                    <option value="" selected="selected">選択してください</option>
+                    <option v-for="(t, key) in treatmentPost" :key="key" :value="t.treatmentID">{{t.treatment}}</option>
+                </select>
+                </div> 
+                <label class="col-form-label col-5">変更内容:</label>
+                <div class="col-10 col-lg-6">
+                    <textarea v-model="newTreatment" class="form-control"></textarea>
+                </div>
+                <button @click="updateSelectTreatment(updateTreatment)" class="btn btn-primary mt-1 py-0 px-1">内容更新</button>
+            </div>
+    
+            <div v-else>
+                <button @click="inversionBoolean" class="btn btn-warning m-0 py-0 px-1">新規処置追加フォーム表示</button>
+            </div>
+        </div>
+        <hr>
         <label class="col-2 col-form-label">日付: </label>
             <div class="col-8 col-lg-3">
                 <input type="datetime-local" v-model="day" class="form-control">
             </div>
-            <label class="col-form-label col-5">処置追加</label> 
-            <div class="col-10 col-lg-6">
-                <textarea v-model="treatment" class="form-control"></textarea>
+        <label class="col-2 col-form-label">処置選択</label>
+            <div class="col-10 col-lg-3">
+                <select v-model="selectTreatment" class="form-control">
+                    <option value="" selected="selected">選択してください</option>
+                    <option v-for="(t, key) in treatmentPost" :key="key" :value="t.treatment">{{t.treatment}}</option>
+                </select>
             </div>
-            <button @click="addTreatment(_uid)" class="btn btn-primary mt-2">追加</button>
-        </div>
-        <hr>
-        <div class="col-12">
-        <h4>更新フォーム</h4>
-             <label class="col-2 col-form-label">日付: </label>
-            <div class="col-8 col-lg-3">
-                <input type="datetime-local" v-model="newDay" class="form-control">
-            </div>
-
-            <label class="col-form-label col-5">処置更新</label>
-            <div class="col-10 col-lg-6">
-                <textarea v-model="newTreatment" class="form-control"></textarea>
-            </div>
-        </div>
+            <button @click="addTreatment(_uid)" class="btn btn-primary mt-2">登録</button>
+        
         <hr>
          <label class="col-3 col-form-label">キーワード検索:</label>
           <div class="col-6 mb-2">
@@ -38,15 +59,15 @@
             </vue-simple-suggest>
          </div>
          <hr>       
-        <div class="col-12 scroll">
-            <div v-for="(t,key) in serchTreatment" :key="key">
-            <p>{{t.value.day}}</p>
-            <p style="white-space:pre-wrap; word-wrap:break-word;">{{t.value.treatment}}</p>
-    
-            <button @click="updateTreatment(t.value.treatmentID)" class="btn btn-primary px-0 col-2 col-lg-1">更新</button>
-            <button @click="deleteTreatment(t.value.treatmentID)" class="btn btn-primary px-0 col-2 col-lg-1 mx-1">削除</button>
-            <hr>
+        <div class="col-12 scroll" @mousemove.once="getTreatment">
+            <div v-for="(selectT, key) in getTreatmentPageData" :key="key">
+                <p>日付:{{selectT.value.day}}</p>
+                <p>内容:{{selectT.value.selectTreatment}}</p>
+                <p>登録者:{{selectT.value.displayStaffName}}</p>
+                <button @click="deleteTreatment(selectT.value.selectTreatmentID)" class="btn btn-primary mt-2">削除</button>
+                <hr>
             </div>
+            <hr>
         </div>
         <vuejs-paginate
             :page-count="pageCount"
@@ -76,8 +97,12 @@ export default {
     mixins: [MixinUsersRecord],
     data() {
      return {
-       newTreatment: '',
-       treatmentPost: {}
+         defaultBoolean: false,
+         selectTreatment: '',
+         treatmentPost: {},
+         selectTreatmentPost: {},
+         updateTreatment: '',
+         newTreatment: '',
      };
     },
     components: {
@@ -87,7 +112,7 @@ export default {
     computed: {
         treatmentLists() {
             this.treatmentList();
-            return this.treatmentPost;
+            return this.selectTreatmentPost;
         },
         //treatmentListsからキーワード候補抽出
         treatmentKeyword() {
@@ -102,8 +127,8 @@ export default {
     },
             
         serchTreatment() {
-            return this.treatmentLists.filter(t => {
-                return t.value.treatment.includes(this.keyword);
+            return this.reverseSortTreatment.filter(t => {
+                return t.value.selectTreatment.includes(this.keyword);
             });
         },
          //ページカウント
@@ -111,32 +136,43 @@ export default {
             return Math.ceil(this.serchTreatment.length / this.parPage)
         },
         //ページ機能追加
-        getHistoryPageData() {
+        getTreatmentPageData() {
             var current = this.currentPage * this.parPage;
             var start = current - this.parPage  
             return this.serchTreatment.slice(start, current)
-        }               
+        },
+          sortTreatment(){
+                return this.treatmentLists.slice().sort((a, b) => {
+                    return Number(new Date(a.value.day)) - Number(new Date(b.value.day));
+                });
+            },
+            //日付逆転追加
+            reverseSortTreatment() {
+                return this.sortTreatment.slice().reverse();
+            },             
     },
     methods: {
-         treatmentList() {
-               const arr = Object.entries(this.treatmentPost)
-               const result = arr.map(([key, value]) => ({key, value}))
-               this.treatmentPost = result
+         inversionBoolean() {
+             this.defaultBoolean = !this.defaultBoolean
          },
-        addTreatment(uid) {
+         treatmentList() {
+               const arr = Object.entries(this.selectTreatmentPost)
+               const result = arr.map(([key, value]) => ({key, value}))
+               this.selectTreatmentPost = result
+         },
+        addSelectTreatment(uid) {//新規処置記録登録
             if(this.treatment === ''){ return }
-                this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatment').doc(String(uid)).set({
-                    day: this.day,
+                this.recordRef.doc('treatment').collection('treatments').doc(String(uid)).set({
                     treatment: this.treatment,
                     treatmentID: uid
                 }).then(() => {
-                    this.treatment = ""
+                    this.treatment = ''
                     this._uid = Math.floor( Math.random(this._uid) * 100 )
                 })
             alert('追加しました')
         },
-        getTreatment() {
-             this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatment').onSnapshot(querySnapshot => {
+        getSelectTreatment() {//新規処置記録として登録した値をgetするメソッド
+             this.recordRef.doc('treatment').collection('treatments').onSnapshot(querySnapshot => {
                 const obj = {}
                 querySnapshot.forEach(doc => {
                     obj[doc.id] = doc.data()
@@ -144,17 +180,40 @@ export default {
                 this.treatmentPost = obj
               })
         },
-        updateTreatment(uid) {
-             if(this.newTreatment === ''){ return }
-             this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatment').doc(String(uid)).update({
-                treatment: this.newTreatment
-            }).then(() => {
-                this.newTreatment = ''
-            })
-            alert('更新しました')
+        updateSelectTreatment(uid) {
+             this.recordRef.doc('treatment').collection('treatments').doc(String(uid)).update({
+                    treatment: this.newTreatment,
+                    treatmentID: uid
+                }).then(() => {
+                    this.newTreatment = ''
+                    this._uid = Math.floor( Math.random(this._uid) * 100 )
+                })
+            alert('追加しました')
+        },
+        addTreatment(uid) {//getSelectTreatmentで取得した値をひとつ選択し、その日の処置記録として登録するメソッド
+            if(this.selectTreatment === ''){ return }
+                this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatmentList').doc(String(uid)).set({
+                    day: this.day,
+                    selectTreatment: this.selectTreatment,
+                    displayStaffName: this.displayStaffName,
+                    selectTreatmentID: uid
+                }).then(() => {
+                    this.selectTreatment = ""
+                    this._uid = Math.floor( Math.random(this._uid) * 100 )
+                })
+            alert('追加しました')
+        },
+        getTreatment() {
+             this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatmentList').onSnapshot(querySnapshot => {
+                const obj = {}
+                querySnapshot.forEach(doc => {
+                    obj[doc.id] = doc.data()
+                })
+                this.selectTreatmentPost = obj
+              })
         },
         deleteTreatment(uid) {
-            this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatment').doc(String(uid)).delete()
+            this.usersRef.doc('user').collection('user').doc(this.userName).collection('treatmentList').doc(String(uid)).delete()
             alert('削除しました')
         },
          //ページをクリックした際の数字変化メソッド

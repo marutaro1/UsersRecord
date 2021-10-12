@@ -234,12 +234,12 @@
             },
 
             getRecord(i) {
-                //orderBy('day', 'desc')でデータをdayの降順に取得している。また、limit(10)とすることでデータを10件のみしか取得していない
+                //orderBy('day', 'desc')でlimit(10)とすることでデータを10件のみしか取得していない
                 //where('day' '>=' startDay)で日付が指定した月の1日以上ののもの, where('day', '<=' endDay)で日付が指定した月以下
               var startDay = i + '-01'
               var endDay = i + '-31'
 
-              this.recordRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).orderBy('day', 'desc').limit(150).onSnapshot(querySnapshot => {
+              this.recordRef.doc('users-record').collection(this.userProfile[0][0]).where('day', '>=', startDay).where('day', '<=', endDay).limit(150).onSnapshot(querySnapshot => {
                 var obj = {}
                 querySnapshot.forEach(doc => {
                 //querySnapshotが現在の全体のデータ
