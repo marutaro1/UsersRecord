@@ -15,7 +15,7 @@
 
                 <br>
 
-                <label class="col-form-label col-5">2:既存業務更新</label>
+                <label class="col-form-label col-5">2:既存処置更新</label>
                 <div class="col-10 col-lg-3">
                 <label class="col-form-label col-5">元の内容:</label>
                 <select class="form-control py-0 px-1" v-model="updateTreatment">
@@ -36,6 +36,7 @@
             </div>
         </div>
         <hr>
+        <h4>処置登録</h4>
         <label class="col-2 col-form-label">日付: </label>
             <div class="col-8 col-lg-3">
                 <input type="datetime-local" v-model="day" class="form-control">

@@ -157,14 +157,7 @@
                 return keywordData;
             },
             //日付指定追加
-           /* serchDay() {
-                return this.reverseSortRecords.filter(rec => {
-                            this.getDay(this.dayKeywordFirst, this.dayKeywordSecond);
-                            var customIncludes = (arr, target) => arr.some(el => target.includes(el));
-                            //独自関数
-                            return customIncludes(this.arrayDayData, rec.value.day);
-                });
-            }, */
+        
             //キーワード検索追加
             serchRecords() {
                 return this.reverseSortRecords.filter(rec => {

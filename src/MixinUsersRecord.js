@@ -54,6 +54,14 @@ import firebase from 'firebase';
                 department: '',
                 officialPosition: '',
                 changeValue: false,//root pathで記録未登録者ボタンと切り替えるための値
+                checkStaffsPost: [{
+                    staffName: '',
+                    phs: '',
+                    work: [],
+                    additionalWorkOne: '',
+                    additionalWorkTwo: '',
+                    additionalWorkThree: '',
+                }],//staffDatasの中のstaffNameを格納している配列
             }
         },
         created() {
