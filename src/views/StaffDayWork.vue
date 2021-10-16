@@ -171,7 +171,6 @@ export default {
         },
        
         getAllDailyWork() {//addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
-            this.pathWorksView()
             this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
                 var obj = {}
                     querySnapshot.forEach(doc => {
@@ -188,6 +187,7 @@ export default {
                           obj[doc.id] = doc.data()
                       });
                       this.dailyWorkAllData = obj
+                      if(this.staffCompleteWorkCheck !== {}) {return}
                         var i = 0
                         while(i < Number(obj[this.today].checkStaffsPost.length)) {
                         this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(obj[this.today].checkStaffsPost[i].staffName).set({
