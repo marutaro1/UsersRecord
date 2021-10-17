@@ -1,19 +1,21 @@
 <template>
     <div class="mt-2">
         <h2>業務</h2>
-        <label class="col-6 col-form-label">日付:</label>
-         <div class="col-6 col-lg-3">
-            <input type="date" v-model="today" class="form-control">
-         </div>
-        <label class="col-6 col-form-label">部署:</label>
-        <div class="col-6 col-lg-2">
-        <select v-model="departmentWorks" class="form-select form-select-sm">
-            <option value="">選択してください</option>
-            <option value="caregiver">介護</option>
-            <option value="nurse">看護</option>
-            <option value="rehabilitation">リハビリ</option>
-            <option value="studentSupport">生活支援</option>
-        </select>   
+        <div @click="pathStaffDayWorkView">
+            <label class="col-6 col-form-label">日付:</label>
+            <div class="col-6 col-lg-3">
+                <input type="date" v-model="today" class="form-control">
+            </div>
+            <label class="col-6 col-form-label">部署:</label>
+            <div class="col-6 col-lg-2">
+            <select v-model="departmentWorks" class="form-select form-select-sm">
+                <option value="">選択してください</option>
+                <option value="caregiver">介護</option>
+                <option value="nurse">看護</option>
+                <option value="rehabilitation">リハビリ</option>
+                <option value="studentSupport">生活支援</option>
+            </select>   
+            </div>
         </div>
         <button @click="staffDataGet" class="mt-2 btn btn-warning">業務登録</button>
         <div v-if="staffOfficialPosition !== ''">
@@ -90,6 +92,7 @@
                 </div>
             
                 <button v-if="!limitOver" @click="addStaffData" class="my-3 btn btn-primary">職員追加</button>
+                <button v-if="allCountNumber > 1" @click="removeStaffData(staff)" class="my-3 mx-2  btn btn-primary">削除</button>
                 <hr>
             </div>
             <button @click="addAllDailyWork" class="btn btn-warning">{{today}}:業務登録</button>
