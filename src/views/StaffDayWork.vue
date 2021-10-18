@@ -177,44 +177,22 @@ export default {
             this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today).set({
                 checkStaffsPost: this.checkStaffsPost
             }).then(() => {
-                this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
-                var obj = {}
-                    querySnapshot.forEach(doc => {
-                        obj[doc.id] = doc.data()
-                    })
-                    this.staffCompleteWorkCheck = obj     
-                    console.log(this.staffCompleteWorkCheck)
-            });
-            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
-                   const obj = {}
-                      querySnapshot.forEach(doc => {
-                          if(String(doc.id) !== String(this.today)) { return }
-                          obj[doc.id] = doc.data()
-                      });
-                      this.dailyWorkAllData = obj
-                        var i = 0
-                        while(i < Number(obj[this.today].checkStaffsPost.length)) {
-                        this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(obj[this.today].checkStaffsPost[i].staffName).set({
-                                workCheck: [''],
-                                additionalWorkCheck: ['','',''],
-                                staffMemo: '',
-                            })
-                            i++
-                        }   
-                     
-            })
+                this.addNewDailyWorkData()
             })
         },
-        getAllDailyWork() {//addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
+        getAllDailyWork() {
             setTimeout(() => {
                 this.pathWorksView()
             }, 1000)
+            this.addDailyWorkData()
+        },
+        addDailyWorkData() {//getAllDailyWork用のデータ登録・呼び出しメソッド
             this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
                 var obj = {}
                     querySnapshot.forEach(doc => {
                         obj[doc.id] = doc.data()
                     })
-                    this.staffCompleteWorkCheck = obj     
+                    this.staffCompleteWorkCheck = obj//完了業務をstaffCompleteworkCheckに入れ込む    
                     console.log(this.staffCompleteWorkCheck)
             })
             this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
@@ -223,8 +201,8 @@ export default {
                           if(String(doc.id) !== String(this.today)) { return }
                           obj[doc.id] = doc.data()
                       });
-                      this.dailyWorkAllData = obj
-                      if(this.staffCompleteWorkCheck !== {}){return}
+                      this.dailyWorkAllData = obj //addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
+                      if(this.staffCompleteWorkCheck !== {}){return} //先ほどのstaffCompleteWorkCheckが{}の場合は、空のworkCheckなどの配列をDBに登録する
                         var i = 0
                         while(i < Number(obj[this.today].checkStaffsPost.length)) {
                         this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(obj[this.today].checkStaffsPost[i].staffName).set({
@@ -236,8 +214,34 @@ export default {
                         }   
                      
             })
-            
-             
+        },
+        addNewDailyWorkData() {//addAllDailyWork用のデータ登録・呼び出しメソッド ※if(this.staffCompleteWorkCheck)の部分をなくしている
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').onSnapshot(querySnapshot => {
+                var obj = {}
+                    querySnapshot.forEach(doc => {
+                        obj[doc.id] = doc.data()
+                    })
+                    this.staffCompleteWorkCheck = obj//完了業務をstaffCompleteworkCheckに入れ込む    
+                    console.log(this.staffCompleteWorkCheck)
+            })
+            this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).onSnapshot(querySnapshot => {
+                   const obj = {}
+                      querySnapshot.forEach(doc => {
+                          if(String(doc.id) !== String(this.today)) { return }
+                          obj[doc.id] = doc.data()
+                      });
+                      this.dailyWorkAllData = obj //addAllDailyWorkに保存したデータを、日付ごとに取得し、その中で日付が選択した日付と合致するもののみをdailyWorkAllData(からのオブジェクト)に入れ込む
+                        var i = 0
+                        while(i < Number(obj[this.today].checkStaffsPost.length)) {
+                        this.staffRef.doc('staff').collection('daily-work-' + this.departmentWorks).doc(this.today + 'completeWork').collection('complete').doc(obj[this.today].checkStaffsPost[i].staffName).set({
+                                workCheck: [''],
+                                additionalWorkCheck: ['','',''],
+                                staffMemo: '',
+                            })
+                            i++
+                        }   
+                     
+            })
         },
         addStaffData() {//登録するためのstaffのデータを追加するためのメソッド
             this.checkStaffsPost.push(this.independentObject())
